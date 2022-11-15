@@ -1,4 +1,8 @@
-# TurtleBot3
+# TurtleBot3 - BFS path planning
+
+## Objective of the project :
+To Understand path planning concepts using slam, and implementing BFS on LiDAR based TurtleBot3, and then  further increasing that knowledge and implementing more advanced path planning concepts
+
 <img src="https://github.com/ROBOTIS-GIT/emanual/blob/master/assets/images/platform/turtlebot3/logo_turtlebot3.png" width="300">
 
 [![kinetic-devel Status](https://github.com/ROBOTIS-GIT/turtlebot3_simulations/workflows/kinetic-devel/badge.svg)](https://github.com/ROBOTIS-GIT/turtlebot3_simulations/tree/kinetic-devel)
