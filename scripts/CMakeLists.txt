@@ -8,8 +8,9 @@ project(scripts)
 ## if COMPONENTS list like find_package(catkin REQUIRED COMPONENTS xyz)
 ## is used, also find other catkin packages
 find_package(catkin REQUIRED COMPONENTS
+  costmap_2d
+  dynamic_reconfigure
   roscpp
-  rospy
 )
 
 ## System dependencies are found with CMake's conventions
@@ -104,7 +105,7 @@ find_package(catkin REQUIRED COMPONENTS
 catkin_package(
 #  INCLUDE_DIRS include
 #  LIBRARIES scripts
-#  CATKIN_DEPENDS roscpp rospy
+#  CATKIN_DEPENDS costmap_2d dynamic_reconfigure roscpp
 #  DEPENDS system_lib
 )
 
@@ -121,8 +122,7 @@ include_directories(
 
 ## Declare a C++ library
 # add_library(${PROJECT_NAME}
-#   src/${PROJECT_NAME}/scripts.cpp
-# )
+add_library(scripts src/Costmap2d.cpp)
 
 ## Add cmake target dependencies of the library
 ## as an example, code may need to be generated before libraries
