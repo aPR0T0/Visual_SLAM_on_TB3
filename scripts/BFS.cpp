@@ -214,7 +214,11 @@ std::vector<std::pair<int,int>> return_path(std::pair<int,int> final_index, std:
     path.push_back(initial_index);
     return path;
   }
-  
+  else if(final_index.first < 0 && final_index.second < 0){
+    path.clear();
+    path.push_back({-1,-1});
+    return path;
+  }
   parentx = root->parent;
   root = new Node(root->parent.first, root->parent.second); // Now going back to the parent
   path.push_back(parentx);
@@ -240,6 +244,7 @@ int main(int argc, char **argv) {
 
     // Initializing the node root which is going to be the first and the only node with no parent
     std::pair<int,int> u, v; // pixels of the current grid cell
+    std::vector<std::pair<int,int>> path;
     
     u = distance_to_pixel(curr_x, curr_y);
     v = distance_to_pixel(des_x, des_y);
@@ -265,7 +270,11 @@ int main(int argc, char **argv) {
       Que.pop(); // Now marking current element as visited
       
       if(indx.first == v.first && indx.second == v.second){// This means the goal is reached
-        return_path(v, u, root);
+        path = return_path(v, u, root);
+      }
+
+      else if(indx.first > v.first && indx.second > v.second){
+        path = return_path({-1,-1}, u, root); // This will return no path 
       }
 
       Node* root = new Node(indx.first, indx.second);// Now going to the First Child
