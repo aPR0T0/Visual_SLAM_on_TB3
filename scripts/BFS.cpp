@@ -11,10 +11,15 @@
 int n1;
 int m;
 int curr_x, curr_y, curr_theta;
+int des_x, des_y, des_theta;
 int data1[9216];
 
 long data_2d[96][96];
 int x, y, z, w;
+std::queue<std::pair<int,int>> Que;
+int visited[96][96]={-1}; // Marking all nodes as unvisited
+// -1 -> univisited
+//  1 -> visited
 
 //--------------------------------------------------------------------------//
                               /*Node for BFS*/
@@ -63,15 +68,11 @@ void get_position(const nav_msgs::OdometryPtr& msg){
 //--------------------------------------------------------------------------// 
 
 void get_2d_map(int data1[]){
-
   for(int i = 0; i < n1 ; i++){
-
     for(int j = 0; j < (m-1) ; j++){
       data_2d[i][j] = data1[i*n1+j+1];
     }
-
   }
-
 }
 
 
@@ -88,6 +89,136 @@ std::pair<int,int> distance_to_pixel(int distance_x, int distance_y){
   indices.second = (distance_y + 5)/0.1 ;// origin of the map is position (-5,-5)
 
   return indices;
+}
+
+std::pair<int,int> pixel_to_distance(int index_1, int index_2){
+  std::pair<int,int> pixels;
+  
+  pixels.first = index_1*0.1 - 5;
+  pixels.second = index_2*0.1 - 5;
+
+  return pixels;
+}
+//--------------------------------------------------------------------------//
+
+//--------------------------------------------------------------------------//
+
+
+                      /*BFS Function 
+                        Arguments:
+                                  Nodes
+                        Returns: 
+                                  Nothing
+                        Functionality:
+                                  Makes the graph for the BFS
+                      */
+
+                    
+void BFS_graph_builder(Node* &root, int i, int  j){
+  // Now we will be checking each free node which is in the-
+  // neighbourhood of range 1 pixel in the environment.
+  // if(i+1 > n1 || j+1 > m){
+      //This condition will be used later
+  // } 
+  visited[i][j] = 1; // Marking current node as visited too
+
+  if(data_2d[i+1][j] == 0 && visited[i+1][j] == -1){
+    //Setting a parent
+    Node* child = new Node({i+1, j});
+    child->parent = {i, j};
+    //Setting a Child
+    root->children.push_back({i+1,j});
+    Que.push({i+1,j});
+    visited[i+1][j] = 1;
+  }
+
+  if(data_2d[i][j+1] == 0 && visited[i][j+1] == -1){
+
+    Node* child = new Node({i, j+1});
+    child->parent = {i, j};
+
+    root->children.push_back({i,j+1});
+    Que.push({i,j+1});
+    visited[i][j+1] = 1;
+  }
+
+  if(data_2d[i+1][j+1] == 0 && visited[i+1][j+1] == -1){
+
+    Node* child = new Node({i+1, j+1});
+    child->parent = {i, j};
+
+    root->children.push_back({i+1,j+1});
+    Que.push({i+1,j+1});
+    visited[i+1][j+1] = 1;
+  }
+
+  if(data_2d[i-1][j+1] == 0 && visited[i][j+1] == -1){
+
+    Node* child = new Node({i-1, j+1});
+    child->parent = {i, j};
+
+    root->children.push_back({i-1,j+1});
+    Que.push({i-1,j+1});
+    visited[i][j+1] = 1;
+  }
+
+  if(data_2d[i-1][j] == 0 && visited[i-1][j] == -1){
+
+    Node* child = new Node({i-1, j});
+    child->parent = {i, j};
+
+    root->children.push_back({i-1,j});
+    Que.push({i-1,j});
+    visited[i-1][j] = 1;
+  }
+
+  if(data_2d[i][j-1] == 0 && visited[i][j-1] == -1){
+
+    Node* child = new Node({i, j-1});
+    child->parent = {i, j};
+
+    root->children.push_back({i,j-1});
+    Que.push({i,j-1});
+    visited[i][j-1] = 1;
+  }
+
+  if(data_2d[i-1][j-1] == 0 && visited[i-1][j-1] == -1){
+
+    Node* child = new Node({i-1, j-1});
+    child->parent = {i, j};
+
+    root->children.push_back({i-1,j-1});
+    Que.push({i-1,j-1});
+    visited[i-1][j-1] = 1;
+  }
+
+  if(data_2d[i+1][j-1] == 0 && visited[i+1][j-1] == -1){
+
+    Node* child = new Node({i+1, j-1});
+    child->parent = {i, j};
+
+    root->children.push_back({i+1,j-1});
+    Que.push({i+1,j-1});
+    visited[i+1][j-1] = 1;
+  }
+}
+//--------------------------------------------------------------------------//
+
+//--------------------------------------------------------------------------//
+                        // ## Returning Path ## //
+std::vector<std::pair<int,int>> return_path(std::pair<int,int> final_index, std::pair<int,int> initial_index, Node* root){
+  std::vector<std::pair<int,int>> path;
+  std::pair<int,int> parentx;
+  
+  if(final_index.first == initial_index.first && final_index.second == initial_index.second){
+    path.push_back(initial_index);
+    return path;
+  }
+  
+  parentx = root->parent;
+  root = new Node(root->parent.first, root->parent.second); // Now going back to the parent
+  path.push_back(parentx);
+  return_path(final_index, parentx, root);
 }
 //--------------------------------------------------------------------------//
 
@@ -108,11 +239,41 @@ int main(int argc, char **argv) {
     get_2d_map(data1); //got the 2d map to operate upon
 
     // Initializing the node root which is going to be the first and the only node with no parent
-    std::pair<int,int> u; // pixels of the current grid cell
+    std::pair<int,int> u, v; // pixels of the current grid cell
+    
     u = distance_to_pixel(curr_x, curr_y);
+    v = distance_to_pixel(des_x, des_y);
     Node* root = new Node(u.first, u.second);
+     // Marking current node as visited
+
 //--------------------------------------------------------------------------//
-    /*Apply BFS here*/
+    /*BFS Function declared Up there
+      Arguments:
+                Nodes
+      Returns: 
+                Nothing
+      Functionality:
+                Makes the graph for the BFS
+    */
+    BFS_graph_builder(root, u.first, u.second);
+    // Now all the neighbouring nodes are added to the children vector in the current node
+
+    // Now let's check if the queue is empty or not
+    if(!Que.empty()){
+      
+      std::pair<int,int> indx = Que.front();
+      Que.pop(); // Now marking current element as visited
+      
+      if(indx.first == v.first && indx.second == v.second){// This means the goal is reached
+        return_path(v, u, root);
+      }
+
+      Node* root = new Node(indx.first, indx.second);// Now going to the First Child
+      
+      BFS_graph_builder(root, indx.first, indx.second); // Now building the graph further
+
+    } 
+
 //--------------------------------------------------------------------------//
 
     ros::spinOnce();
@@ -124,3 +285,12 @@ int main(int argc, char **argv) {
 
   return 0;
 }
+
+
+/*
+// 
+
+  ####################################### Algorithm for the Code #####################################
+
+//
+*/
