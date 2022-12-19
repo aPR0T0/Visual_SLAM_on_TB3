@@ -3,48 +3,65 @@
 ## Objective of the project :
 To Understand path planning concepts using slam, and implementing BFS on LiDAR based TurtleBot3, and then  further increasing that knowledge and implementing more advanced path planning concepts
 
-<img src="https://github.com/ROBOTIS-GIT/emanual/blob/master/assets/images/platform/turtlebot3/logo_turtlebot3.png" width="300">
+## Reference for the Model:- [Robotis](https://emanual.robotis.com/docs/en/platform/turtlebot3/simulation/)
 
-[![kinetic-devel Status](https://github.com/ROBOTIS-GIT/turtlebot3_simulations/workflows/kinetic-devel/badge.svg)](https://github.com/ROBOTIS-GIT/turtlebot3_simulations/tree/kinetic-devel)
-[![melodic-devel Status](https://github.com/ROBOTIS-GIT/turtlebot3_simulations/workflows/melodic-devel/badge.svg)](https://github.com/ROBOTIS-GIT/turtlebot3_simulations/tree/melodic-devel)
-[![noetic-devel Status](https://github.com/ROBOTIS-GIT/turtlebot3_simulations/workflows/noetic-devel/badge.svg)](https://github.com/ROBOTIS-GIT/turtlebot3_simulations/tree/noetic-devel)
+We are Using turtle bot burger for our Path planning objective
 
-[![dashing-devel Status](https://github.com/ROBOTIS-GIT/turtlebot3_simulations/workflows/dashing-devel/badge.svg)](https://github.com/ROBOTIS-GIT/turtlebot3_simulations/tree/dashing-devel)
-[![foxy-devel Status](https://github.com/ROBOTIS-GIT/turtlebot3_simulations/workflows/foxy-devel/badge.svg)](https://github.com/ROBOTIS-GIT/turtlebot3_simulations/tree/foxy-devel)
-[![galactic-devel Status](https://github.com/ROBOTIS-GIT/turtlebot3_simulations/workflows/galactic-devel/badge.svg)](https://github.com/ROBOTIS-GIT/turtlebot3_simulations/tree/galactic-devel)
+---
+## Algorithm for BFS
 
-## ROBOTIS e-Manual for TurtleBot3
-- [ROBOTIS e-Manual for TurtleBot3](http://turtlebot3.robotis.com/)
+### Basic Algorithm for BFS
 
-## Wiki for turtlebot3_simulations Packages
-- http://wiki.ros.org/turtlebot3_simulations (metapackage)
-- http://wiki.ros.org/turtlebot3_fake
-- http://wiki.ros.org/turtlebot3_gazebo
+Breadth-first search (BFS) is an algorithm for traversing
+or searching tree or graph data structures. It starts at
+the tree root (or some arbitrary node of a graph, sometimes
+referred to as a 'search key') and explores the neighbor
+nodes first, before moving to the next level neighbors.
 
-## Open Source related to TurtleBot3
-- [turtlebot3](https://github.com/ROBOTIS-GIT/turtlebot3)
-- [turtlebot3_msgs](https://github.com/ROBOTIS-GIT/turtlebot3_msgs)
-- [turtlebot3_simulations](https://github.com/ROBOTIS-GIT/turtlebot3_simulations)
-- [turtlebot3_applications_msgs](https://github.com/ROBOTIS-GIT/turtlebot3_applications_msgs)
-- [turtlebot3_applications](https://github.com/ROBOTIS-GIT/turtlebot3_applications)
-- [turtlebot3_autorace](https://github.com/ROBOTIS-GIT/turtlebot3_autorace)
-- [turtlebot3_deliver](https://github.com/ROBOTIS-GIT/turtlebot3_deliver)
-- [hls_lfcd_lds_driver](https://github.com/ROBOTIS-GIT/hls_lfcd_lds_driver)
-- [turtlebot3_manipulation](https://github.com/ROBOTIS-GIT/turtlebot3_manipulation.git)
-- [turtlebot3_manipulation_simulations](https://github.com/ROBOTIS-GIT/turtlebot3_manipulation_simulations.git)
-- [robotis_manipulator](https://github.com/ROBOTIS-GIT/robotis_manipulator)
-- [open_manipulator_msgs](https://github.com/ROBOTIS-GIT/open_manipulator_msgs)
-- [open_manipulator](https://github.com/ROBOTIS-GIT/open_manipulator)
-- [open_manipulator_simulations](https://github.com/ROBOTIS-GIT/open_manipulator_simulations)
-- [open_manipulator_perceptions](https://github.com/ROBOTIS-GIT/open_manipulator_perceptions)
-- [dynamixel_sdk](https://github.com/ROBOTIS-GIT/DynamixelSDK)
-- [OpenCR-Hardware](https://github.com/ROBOTIS-GIT/OpenCR-Hardware)
-- [OpenCR](https://github.com/ROBOTIS-GIT/OpenCR)
+![Algorithm Visualization](https://upload.wikimedia.org/wikipedia/commons/5/5d/Breadth-First-Search-Algorithm.gif)
 
-## Documents and Videos related to TurtleBot3
-- [ROBOTIS e-Manual for TurtleBot3](http://turtlebot3.robotis.com/)
-- [ROBOTIS e-Manual for OpenManipulator](http://emanual.robotis.com/docs/en/platform/openmanipulator/)
-- [ROBOTIS e-Manual for Dynamixel SDK](http://emanual.robotis.com/docs/en/software/dynamixel/dynamixel_sdk/overview/)
-- [Website for TurtleBot Series](http://www.turtlebot.com/)
-- [e-Book for TurtleBot3](https://community.robotsource.org/t/download-the-ros-robot-programming-book-for-free/51/)
-- [Videos for TurtleBot3 ](https://www.youtube.com/playlist?list=PLRG6WP3c31_XI3wlvHlx2Mp8BYqgqDURU)
+## Pseudocode
+
+```sh
+BFS(root)
+  Pre: root is the node of the BST
+  Post: the nodes in the BST have been visited in breadth first order
+  q ← queue
+  while root = ø
+    yield root.value
+    if root.left = ø
+      q.enqueue(root.left)
+    end if
+    if root.right = ø
+      q.enqueue(root.right)
+    end if
+    if !q.isEmpty()
+      root ← q.dequeue()
+    else
+      root ← ø
+    end if
+  end while
+end BFS
+```
+
+#### Applications
+* Finding the shortest path between two nodes u and v, with path length measured by number of edges (an advantage over depth-first search)
+* Serialization/Deserialization of a binary tree vs serialization in sorted order, allows the tree to be re-constructed in an efficient manner.
+* Construction of the failure function of the Aho-Corasick pattern matcher.
+* Testing bipartiteness of a graph.
+
+
+----
+## Our use case
+#### There are two main steps that we need to perform here:
+- Storing each [node]() by connecting them to its neighbours which are unoccupied and unvisited. The subpart for this is: 
+    1. Storing a single parent of current node.
+    2. Storing all the unvisited neighbours as children in the form of a list.
+- After storing, we just need to reach the required node, that will be set as target and will be given as the input by the user
+
+## References
+
+- [trekhleb/javascript-algorithms](https://github.com/trekhleb/javascript-algorithms/tree/master/src/algorithms/tree/breadth-first-search)
+- [Wikipedia](https://en.wikipedia.org/wiki/Breadth-first_search)
+- [Tree Traversals (Inorder, Preorder and Postorder)](https://www.geeksforgeeks.org/tree-traversals-inorder-preorder-and-postorder/)
+- [BFS vs DFS](https://www.geeksforgeeks.org/bfs-vs-dfs-binary-tree/)
