@@ -4,6 +4,7 @@
 #include "nav_msgs/Odometry.h"
 #include "tf/tf.h"
 #include "std_msgs/Int8MultiArray.h"
+#include "geometry_msgs/Point.h"
 #include "nav_msgs/OccupancyGrid.h"
 #include <scripts/Points.h>
 #include "bits/stdc++.h"
@@ -13,7 +14,7 @@ int m;
 int curr_x, curr_y, curr_theta;
 int des_x, des_y, des_theta;
 int data1[9216];
-
+const int N = 1e3;
 long data_2d[96][96];
 int x, y, z, w;
 std::queue<std::pair<int,int>> Que;
@@ -238,7 +239,7 @@ std::vector<std::pair<int,int>> return_path(std::pair<int,int> final_index, std:
 }
 //--------------------------------------------------------------------------//
 
-int main(int argc, char **argv) {
+int main(int &argc, char **argv) {
   ros::init(argc, argv, "map_interpretor");
 
   ros::NodeHandle n;
@@ -257,8 +258,11 @@ int main(int argc, char **argv) {
 
     // Initializing the node root which is going to be the first and the only node with no parent
     std::pair<int,int> u, v; // pixels of the current grid cell
-    std::vector<std::pair<int,int>> path;
-    
+    std::vector<std::pair<int,int>> path; // This is going to be the path we traversed
+    scripts::Points msg; // This is going to be the final published path
+    geometry_msgs::Point  path_pub[N];
+    geometry_msgs::Point point_pub;
+
     u = distance_to_pixel(curr_x, curr_y);
     v = distance_to_pixel(des_x, des_y);
     Node* root = new Node(u.first, u.second);
@@ -284,6 +288,11 @@ int main(int argc, char **argv) {
       
       if(indx.first == v.first && indx.second == v.second){// This means the goal is reached
         path = return_path(v, u, root);
+        for(int i = 0; i < path.size(); i++){
+          point_pub.x = path[i].first;
+          point_pub.y = path[i].second;
+          path_pub[i] = point_pub;
+        }// the path we just got is in terms of indices so we need to convert them to distances as we need to give waypoints to the controller
       }
 
       else if(indx.first > v.first && indx.second > v.second){
@@ -295,9 +304,34 @@ int main(int argc, char **argv) {
       BFS_graph_builder(root, indx.first, indx.second); // Now building the graph further
 
     } 
+    // Now as there is some path existing
+    // We now need to get the path in form of distances
+    for(int i = 0; i < path.size() ; i++){
+      std::pair<double,double> path_temp;
+      point_pub = path_pub[i];
+      path_temp = pixel_to_distance (point_pub.x, point_pub.y);
 
-//--------------------------------------------------------------------------//
+      point_pub.x = path_temp.first;
+      point_pub.y = path_temp.second;
 
+      path_pub[i] = point_pub; 
+    }
+//-----------------------------Now Just publish the Path you just obtained---------------------------------------------//
+    std::vector<geometry_msgs::Point> my_vector (path_pub, path_pub + sizeof(path_pub) / sizeof(geometry_msgs::Point));
+
+    msg.points.clear();
+    msg.end_index = path.size() - 1;
+    int index_z = 0;
+    for (std::vector<geometry_msgs::Point>::iterator it = my_vector.begin(); it != my_vector.end(); ++it) {
+        geometry_msgs::Point point;
+        point.x = (*it).x;
+        point.y = (*it).y;
+        point.z = 0;
+        msg.points.push_back(point);
+        index_z++;
+    }
+
+    path_publisher.publish(msg);
     ros::spinOnce();
 
     rate.sleep();

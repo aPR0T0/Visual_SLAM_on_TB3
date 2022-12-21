@@ -21,11 +21,27 @@ const int k_x = 1, k_y = 1, k_theta = 1;
 int index_x = 0;
 void callback(const scripts::Points::ConstPtr& msg ){ // we need to make a pointer for each message type in roscpp
 
-  turtle_x = msg->points[index_x].x;
-  turtle_y = msg->points[index_x].y;
+  desired_x[index_x] = msg->points[index_x].x;
+  desired_y[index_x] = msg->points[index_x].y;
   
-  turtle_theta = std::atan2( ( turtle_x - prev_x )/( turtle_y - prev_y) );
+  yaw[index_x] = std::atan2( ( turtle_x - prev_x ),( turtle_y - prev_y) );
 
+}
+
+void callback_odo(const nav_msgs::Odometry::ConstPtr& msg ){
+  turtle_x = msg->pose.pose.position.x;
+  turtle_y = msg->pose.pose.position.y;
+
+  tf::Quaternion q(
+    // Does nothing but a way to store a quaternion
+    msg->pose.pose.orientation.w,
+    msg->pose.pose.orientation.x,
+    msg->pose.pose.orientation.y,
+    msg->pose.pose.orientation.z
+  );
+
+  tf::Matrix3x3(q).getRPY(roll,pitch,turtle_theta);
+  // gets orientation in RPY for the given quaternions
 }
 
 int main(int argc, char **argv){
@@ -39,7 +55,7 @@ int main(int argc, char **argv){
   ros::Rate rate(10);
   
   ros::Subscriber subscriber = n.subscribe("path_sub", 10, callback);
-  ros::Subscriber subscriber = n.subscribe("odo_sub", 10, callback);
+  ros::Subscriber subs = n.subscribe("odo_sub", 10, callback_odo);
 
   /**
    * A count of how many messages we have sent. This is used to create
@@ -60,7 +76,10 @@ int main(int argc, char **argv){
     geometry_msgs::Twist velocity;
     
     if(0.01 >= err_x > -0.01 and -0.01<= err_y <= 0.01 and -0.01 <= err_theta < 0.01){
-
+      index_x++;
+      // The subscription is now again called for the next index until the final index is reached
+      ros::Subscriber subscriber = n.subscribe("path_sub", 10, callback);
+      ros::Subscriber subs = n.subscribe("odo_sub", 10, callback_odo);
     }
     // ROS_INFO("%s", msg.data.c_str());
 
