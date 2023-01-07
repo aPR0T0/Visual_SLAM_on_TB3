@@ -13,9 +13,9 @@ int n1;
 int m;
 int curr_x, curr_y, curr_theta;
 int des_x, des_y, des_theta;
-int data1[9216];
+int data1[25];
 const int N = 1e3;
-long data_2d[96][96];
+long data_2d[5][5];
 int x, y, z, w;
 std::queue<std::pair<int,int>> Que;
 int visited[1000][1000]={-1}; // Marking all nodes as unvisited
@@ -244,9 +244,9 @@ int main(int &argc, char **argv) {
 
   ros::NodeHandle n;
   // Subscribing to map topic where all the data of the map is coming from
-  ros::Subscriber subscriber = n.subscribe("map",1000, currentMap);
+//   ros::Subscriber subscriber = n.subscribe("map",1000, currentMap); - > Give the map manually of 5x5 size
   // Subscribing to odometry topic to get the pose estimate
-  ros::Subscriber odo_sub = n.subscribe("odom", 1000, get_position);
+//   ros::Subscriber odo_sub = n.subscribe("odom", 1000, get_position); - > Give the position manually
   ros::Publisher path_publisher = n.advertise<scripts::Points>("path_sub", 1);
   ros::Rate rate(10);
   
