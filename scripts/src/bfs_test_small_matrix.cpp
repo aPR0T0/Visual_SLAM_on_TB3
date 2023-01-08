@@ -1,18 +1,16 @@
 #include "ros/ros.h"
 #include "ros/console.h"
 #include "std_msgs/String.h"
-#include "nav_msgs/Odometry.h"
-#include "tf/tf.h"
 #include "std_msgs/Int8MultiArray.h"
 #include "bits/stdc++.h"
 
-int n1;
-int m;
-int curr_x, curr_y, curr_theta;
-int des_x, des_y, des_theta;
+int n1 = 5;
+int m = 5;
+float des_x, des_y, des_theta;
 int data1[25] = {1,0,0,0,1,0,0,0,0,0,0,0,1,1,0,1,0,0,0,0,0,0,0,0,0};
 const int N = 1e3;
 long data_2d[5][5];
+std::vector<std::pair<int,int>> path;
 int x, y, z, w;
 std::queue<std::pair<int,int>> Que;
 int visited[1000][1000]={-1}; // Marking all nodes as unvisited
@@ -26,14 +24,15 @@ class Node{
   std::pair<int,int> parent; // This stores index of the parent w.r.t 2d map obtained
   std::vector<std::pair<int,int>> children; // This stores the indices of all the "unoccupied children" of the current Node
   Node(){
-    parent.first  = -1;
-    parent.second = -1;
+    parent.first  = -1; // initiallizing as null
+    parent.second = -1; // initiallizing as null
   }
 
   // giving indices to the parent of the given class
   Node(int i, int j){
-    parent.first  = i;
-    parent.second = j;
+    parent.first  = i; // initializing as parent and children still null
+    parent.second = j; // initializing as parent and children still null
+    children.clear();  // When initializing a new node there is no child
   }
 
   void set_child(int i, int j){
@@ -58,10 +57,7 @@ class Node{
 // }
 
 /* We need the odometry data to know where exactly are we present in the map*/
-void get_position(const nav_msgs::OdometryPtr& msg){
-  curr_x = msg->pose.pose.position.x;
-  curr_y = msg->pose.pose.position.y;
-}
+
 
 //--------------------------------------------------------------------------// 
 
@@ -79,21 +75,21 @@ void get_2d_map(int data1[]){
 
 //--------------------------------------------------------------------------//
     /*Functions for distance and pixel indices conversion here*/
-std::pair<int,int> distance_to_pixel(int distance_x, int distance_y){
+std::pair<int,int> distance_to_pixel(float distance_x, float distance_y){
   // 1 pixel = 0.1 meter
   std::pair<int,int> indices;
-
-  indices.first  = (distance_x + 5)/0.1 ;// origin of the map is position (-5,-5)
-  indices.second = (distance_y + 5)/0.1 ;// origin of the map is position (-5,-5)
+  // std::cout<<distance_x<<distance_y<<std::endl;
+  indices.first  = (distance_x + 0.25)/0.1 ;// origin of the map is position (-0.25,-0.25)
+  indices.second = (distance_y + 0.25)/0.1 ;// origin of the map is position (-0.25,-0.25)
 
   return indices;
 }
 
-std::pair<int,int> pixel_to_distance(int index_1, int index_2){
-  std::pair<int,int> pixels;
+std::pair<float,float> pixel_to_distance(float index_1, float index_2){
+  std::pair<float,float> pixels;
   
-  pixels.first = index_1*0.1 - 5;
-  pixels.second = index_2*0.1 - 5;
+  pixels.first  = index_1*0.1 - 0.25;  // x - axis   
+  pixels.second = index_2*0.1 - 0.25;  // y - axis
 
   return pixels;
 }
@@ -216,18 +212,17 @@ void BFS_graph_builder(Node* &root, int i, int  j){
 
 //--------------------------------------------------------------------------//
                         // ## Returning Path ## //
-std::vector<std::pair<int,int>> return_path(std::pair<int,int> final_index, std::pair<int,int> initial_index, Node* root){
-  std::vector<std::pair<int,int>> path;
+void return_path(std::pair<int,int> final_index, std::pair<int,int> initial_index, Node* root){
   std::pair<int,int> parentx;
   
   if(final_index.first == initial_index.first && final_index.second == initial_index.second){
     path.push_back(initial_index);
-    return path;
+    return;
   }
   else if(final_index.first < 0 && final_index.second < 0){
     path.clear();
     path.push_back({-1,-1});
-    return path;
+    return;
   }
   parentx = root->parent;
   root = new Node(root->parent.first, root->parent.second); // Now going back to the parent
@@ -249,93 +244,65 @@ int main() {
   
   int count = 0;
     // ros::Duration current_time(ros::Time::now().toSec()); /* current time*/ - > As such no need for this at this point of time
-    get_2d_map(data1); //got the 2d map to operate upon
+  get_2d_map(data1); //got the 2d map to operate upon
 
-    // Initializing the node root which is going to be the first and the only node with no parent
-    std::pair<int,int> u, v; // pixels of the current grid cell
-    std::vector<std::pair<int,int>> path; // This is going to be the path we traversed
-    // scripts::Points msg; // This is going to be the final published path
+  float curr_x = -0.25, curr_y = 0.2, curr_theta = 0;
+  // Initializing the node root which is going to be the first and the only node with no parent
+  std::pair<int,int> u;
+  std::pair<int,int> v; // pixels of the current grid cell
+  std::vector<std::pair<int,int>> path; // This is going to be the path we traversed
+  // scripts::Points msg; // This is going to be the final published path
 
-    /// Testing of these things will be done later ///
-    // geometry_msgs::Point  path_pub[N];
-    // geometry_msgs::Point point_pub;
-
-    u = distance_to_pixel(curr_x, curr_y);
-    v = distance_to_pixel(des_x, des_y);
-    Node* root = new Node(u.first, u.second);
-     // Marking current node as visited
+  /// Testing of these things will be done later ///
+  // geometry_msgs::Point  path_pub[N];
+  // geometry_msgs::Point point_pub;
+  std::cout<<"Enter the values for desired coordinates : x  y  and orientation : Theta ";
+  std::cin>>des_x>>des_y>>des_theta;
+  // std::cout<<curr_y<<std::endl;
+  u = distance_to_pixel(curr_x, curr_y);
+  v = distance_to_pixel(des_x, des_y);
+  std::cout << u.first<<"  "<< u.second <<std::endl;
+  Node* root = new Node(u.first, u.second);
+   // Marking current node as visited
+  visited[u.first][u.second] = 1;
 
 //--------------------------------------------------------------------------//
-    /*BFS Function declared Up there
-      Arguments:
-                Nodes
-      Returns: 
-                Nothing
-      Functionality:
-                Makes the graph for the BFS
-    */
-    BFS_graph_builder(root, u.first, u.second);
-    // Now all the neighbouring nodes are added to the children vector in the current node
+  /*BFS Function declared Up there
+    Arguments:
+              Nodes
+    Returns: 
+              Nothing
+    Functionality:
+              Makes the graph for the BFS
+  */
+  BFS_graph_builder(root, u.first, u.second);  // Single layer has been built
+  // Now all the neighbouring nodes are added to the children vector in the current node
+  // Now let's check if the queue is empty or not
+  while(!Que.empty() && path.empty()){
+    
+    std::pair<int,int> indx = Que.front();
+    Que.pop(); // Now marking current element as visited
+    
+    if(indx.first == v.first && indx.second == v.second){// This means the goal is reached
+      return_path(v, u, root);
 
-    // Now let's check if the queue is empty or not
-    while(!Que.empty() && path.empty()){
-      
-      std::pair<int,int> indx = Que.front();
-      Que.pop(); // Now marking current element as visited
-      
-      if(indx.first == v.first && indx.second == v.second){// This means the goal is reached
-        path = return_path(v, u, root);
-        // for(int i = 0; i < path.size(); i++){ // No need for this thing right this moment of time
-        //   point_pub.x = path[i].first;
-        //   point_pub.y = path[i].second;
-        //   path_pub[i] = point_pub;
-        // }// the path we just got is in terms of indices so we need to convert them to distances as we need to give waypoints to the controller
+      for(int i = 0; i < path.size() ; i++){
+        std::cout<< "Element: "<< i+1 <<"Indexes: "<< path[i].first<<" "<< path[i].second<<std::endl;
       }
+    
+    }
 
-      else if(indx.first > v.first && indx.second > v.second){
-        path = return_path({-1,-1}, u, root); // This will return no path 
-      }
 
-      Node* root = new Node(indx.first, indx.second);// Now going to the First Child
-      
-      BFS_graph_builder(root, indx.first, indx.second); // Now building the graph further
+    else if(indx.first > v.first && indx.second > v.second){
+      return_path({-1,-1}, u, root); // This will return no path 
+      std::cout<< "No Path was found"<<std::endl;
+    }
 
-    } 
-    // Now as there is some path existing
-    // We now need to get the path in form of distances
-    // for(int i = 0; i < path.size() ; i++){
-    //   std::pair<double,double> path_temp;
-    //   point_pub = path_pub[i];
-    //   path_temp = pixel_to_distance (point_pub.x, point_pub.y);
+    Node* root = new Node(indx.first, indx.second);// Now going to the First Child
+    
+    BFS_graph_builder(root, indx.first, indx.second); // Now building the graph further
 
-    //   point_pub.x = path_temp.first;
-    //   point_pub.y = path_temp.second;
-
-    //   path_pub[i] = point_pub; 
-    // }
-//-----------------------------Now Just publish the Path you just obtained---------------------------------//
-    // std::vector<geometry_msgs::Point> my_vector (path_pub, path_pub + sizeof(path_pub) / sizeof(geometry_msgs::Point));
-
-    // msg.points.clear();
-    // msg.end_index = path.size() - 1;
-    // int index_z = 0;
-    // // Now declaring the messages with the help of the points
-    // for (std::vector<geometry_msgs::Point>::iterator it = my_vector.begin(); it != my_vector.end(); ++it) {
-    //     geometry_msgs::Point point;
-    //     point.x = (*it).x;
-    //     point.y = (*it).y;
-    //     point.z = 0;
-    //     msg.points.push_back(point);
-    //     index_z++;
-    // }
-
-    // path_publisher.publish(msg);
-    // ros::spinOnce();
-
-    // rate.sleep();
-    // ++count;
-//   }
-
+  } 
 
   return 0;
 }
