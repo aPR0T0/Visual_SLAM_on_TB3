@@ -7,13 +7,13 @@
 int n1 = 5;
 int m = 5;
 float des_x, des_y, des_theta;
-int data1[25] = {1,0,0,0,1,0,0,0,0,0,0,0,1,1,0,1,0,0,0,0,0,0,0,0,0};
-const int N = 1e3;
+int data1[25] = {1,0,0,0,0,1,0,0,0,0,0,0,1,1,0,1,0,0,0,0,0,0,0,0,0};
+const int N = 1e2;
 long data_2d[5][5];
 std::vector<std::pair<int,int>> path;
 int x, y, z, w;
 std::queue<std::pair<int,int>> Que;
-int visited[1000][1000]={-1}; // Marking all nodes as unvisited
+int visited[N][N] = {0}; // Marking all nodes as unvisited
 // -1 -> univisited
 //  1 -> visited
 
@@ -63,8 +63,8 @@ class Node{
 
 void get_2d_map(int data1[]){
   for(int i = 0; i < n1 ; i++){
-    for(int j = 0; j < (m-1) ; j++){
-      data_2d[i][j] = data1[i*n1+j+1];
+    for(int j = 0; j < m ; j++){
+      data_2d[i][j] = data1[i*n1+j];
     }
   }
 }
@@ -113,8 +113,18 @@ void BFS_graph_builder(Node* &root, int i, int  j){
   // neighbourhood of range 1 pixel in the environment.
   visited[i][j] = 1; // Marking current node as visited too
 
-  if(data_2d[i+1][j] == 0 && visited[i+1][j] == -1){
+  // ---##########--- Uncomment for testing purposes only ----############----//
+  // std::cout<<"i and j are "<
+  // for(int t = 0; t< 5 ; t++){
+  //   for(int t2 = 0 ; t2<5 ; t2++){
+  //     std::cout<<visited[t][t2];
+  //   }
+  //   std::cout<<std::endl;
+  // }
 
+
+  if(data_2d[i+1][j] == 0 && visited[i+1][j] == 0){
+    
     if( i+1 < n1 ){ // Seeing whether the index is even feasible or not
       //Setting a parent
       Node* child = new Node({i+1, j});
@@ -127,7 +137,8 @@ void BFS_graph_builder(Node* &root, int i, int  j){
 
   }
 
-  if(data_2d[i][j+1] == 0 && visited[i][j+1] == -1){
+  if(data_2d[i][j+1] == 0 && visited[i][j+1] == 0){
+    
     if( j+1 < m ){
       Node* child = new Node({i, j+1});
       child->parent = {i, j};
@@ -138,8 +149,8 @@ void BFS_graph_builder(Node* &root, int i, int  j){
     }
   }
 
-  if(data_2d[i+1][j+1] == 0 && visited[i+1][j+1] == -1){
-
+  if(data_2d[i+1][j+1] == 0 && visited[i+1][j+1] == 0){
+    
     if( i+1 < n1 and j+1 < m ){
       Node* child = new Node({i+1, j+1});
       child->parent = {i, j};
@@ -151,8 +162,8 @@ void BFS_graph_builder(Node* &root, int i, int  j){
 
   }
 
-  if(data_2d[i-1][j+1] == 0 && visited[i][j+1] == -1){
-
+  if(data_2d[i-1][j+1] == 0 && visited[i][j+1] == 0){
+    
     if( i-1 >= 0 and j+1 < m){
       Node* child = new Node({i-1, j+1});
       child->parent = {i, j};
@@ -164,7 +175,8 @@ void BFS_graph_builder(Node* &root, int i, int  j){
 
   }
 
-  if(data_2d[i-1][j] == 0 && visited[i-1][j] == -1){
+  if(data_2d[i-1][j] == 0 && visited[i-1][j] == 0){
+    
     if( i-1 >= 0 ){
       Node* child = new Node({i-1, j});
       child->parent = {i, j};
@@ -175,7 +187,8 @@ void BFS_graph_builder(Node* &root, int i, int  j){
     }
   }
 
-  if(data_2d[i][j-1] == 0 && visited[i][j-1] == -1){
+  if(data_2d[i][j-1] == 0 && visited[i][j-1] == 0){
+    
     if( j >= 0 ){
       Node* child = new Node({i, j-1});
       child->parent = {i, j};
@@ -186,7 +199,8 @@ void BFS_graph_builder(Node* &root, int i, int  j){
     }
   }
 
-  if(data_2d[i-1][j-1] == 0 && visited[i-1][j-1] == -1){
+  if(data_2d[i-1][j-1] == 0 && visited[i-1][j-1] == 0){
+    
     if(i-1 >= 0 and j-1 >= 0){
       Node* child = new Node({i-1, j-1});
       child->parent = {i, j};
@@ -197,7 +211,8 @@ void BFS_graph_builder(Node* &root, int i, int  j){
     }
   }
 
-  if(data_2d[i+1][j-1] == 0 && visited[i+1][j-1] == -1){
+  if(data_2d[i+1][j-1] == 0 && visited[i+1][j-1] == 0){
+    
     if( i+1 < n1 and j-1 >= 0 ){
       Node* child = new Node({i+1, j-1});
       child->parent = {i, j};
@@ -241,11 +256,16 @@ int main() {
 //   ros::Subscriber odo_sub = n.subscribe("odom", 1000, get_position); - > Give the position manually
 //   ros::Publisher path_publisher = n.advertise<scripts::Points>("path_sub", 1); - > Instead of this we just print the indices of the path that we get from the path builder
 //   ros::Rate rate(10);
-  
   int count = 0;
     // ros::Duration current_time(ros::Time::now().toSec()); /* current time*/ - > As such no need for this at this point of time
   get_2d_map(data1); //got the 2d map to operate upon
-
+  
+  for(int i = 0; i < n1 ; i++){
+    for(int j = 0; j < m ; j++){
+      std::cout<<data_2d[i][j];
+    }
+    std::cout<<std::endl;
+  }
   float curr_x = -0.25, curr_y = 0.2, curr_theta = 0;
   // Initializing the node root which is going to be the first and the only node with no parent
   std::pair<int,int> u;
@@ -261,8 +281,9 @@ int main() {
   // std::cout<<curr_y<<std::endl;
   u = distance_to_pixel(curr_x, curr_y);
   v = distance_to_pixel(des_x, des_y);
-  std::cout << u.first<<"  "<< u.second <<std::endl;
-  Node* root = new Node(u.first, u.second);
+  // std::cout << u.first<<"  "<< u.second <<std::endl;
+  // std::cout << v.first<<"  "<< v.second <<std::endl;
+  Node* root = new Node(); // Initial root cannot have a parent
    // Marking current node as visited
   visited[u.first][u.second] = 1;
 
@@ -275,17 +296,24 @@ int main() {
     Functionality:
               Makes the graph for the BFS
   */
+  
   BFS_graph_builder(root, u.first, u.second);  // Single layer has been built
   // Now all the neighbouring nodes are added to the children vector in the current node
   // Now let's check if the queue is empty or not
+  if(Que.empty()){
+  std::cout<<"While loop not working";
+  }
   while(!Que.empty() && path.empty()){
     
     std::pair<int,int> indx = Que.front();
+    
     Que.pop(); // Now marking current element as visited
     
     if(indx.first == v.first && indx.second == v.second){// This means the goal is reached
       return_path(v, u, root);
-
+      std::cout<< "Path was found"<<std::endl;
+      std::cout<< "Path Size"<<path.size()<<std::endl;
+      return 0;
       for(int i = 0; i < path.size() ; i++){
         std::cout<< "Element: "<< i+1 <<"Indexes: "<< path[i].first<<" "<< path[i].second<<std::endl;
       }
@@ -296,6 +324,7 @@ int main() {
     else if(indx.first > v.first && indx.second > v.second){
       return_path({-1,-1}, u, root); // This will return no path 
       std::cout<< "No Path was found"<<std::endl;
+      return 0;
     }
 
     Node* root = new Node(indx.first, indx.second);// Now going to the First Child
@@ -303,7 +332,6 @@ int main() {
     BFS_graph_builder(root, indx.first, indx.second); // Now building the graph further
 
   } 
-
   return 0;
 }
 
