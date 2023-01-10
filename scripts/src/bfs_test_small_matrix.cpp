@@ -32,7 +32,7 @@ class Node{
   Node(int i, int j){
     parent.first  = i; // initializing as parent and children still null
     parent.second = j; // initializing as parent and children still null
-    children.clear();  // When initializing a new node there is no child
+    // children.clear();  // When initializing a new node there is no child
   }
 
   void set_child(int i, int j){
@@ -227,22 +227,24 @@ void BFS_graph_builder(Node* &root, int i, int  j){
 
 //--------------------------------------------------------------------------//
                         // ## Returning Path ## //
-void return_path(std::pair<int,int> final_index, std::pair<int,int> initial_index, Node* root){
+std::vector<std::pair<int,int>> return_path(std::pair<int,int> final_index, std::pair<int,int> initial_index, Node* &root){
   std::pair<int,int> parentx;
-  
+  std::cout<<"This function was called"<<std::endl;
   if(final_index.first == initial_index.first && final_index.second == initial_index.second){
     path.push_back(initial_index);
-    return;
+    std::cout<<"This step was reached"<<std::endl;
+    return path;
   }
   else if(final_index.first < 0 && final_index.second < 0){
     path.clear();
     path.push_back({-1,-1});
-    return;
+    std::cout<<"This step was also reached"<<std::endl;
+    return path;
   }
   parentx = root->parent;
   root = new Node(root->parent.first, root->parent.second); // Now going back to the parent
   path.push_back(parentx);
-  return_path(final_index, parentx, root);
+  return_path(final_index, initial_index, root);
 }
 //--------------------------------------------------------------------------//
 
@@ -286,7 +288,7 @@ int main() {
   Node* root = new Node(); // Initial root cannot have a parent
    // Marking current node as visited
   visited[u.first][u.second] = 1;
-
+  Que.push({u.first,u.second});
 //--------------------------------------------------------------------------//
   /*BFS Function declared Up there
     Arguments:
@@ -310,6 +312,7 @@ int main() {
     Que.pop(); // Now marking current element as visited
     
     if(indx.first == v.first && indx.second == v.second){// This means the goal is reached
+      std::cout<< "Path was found"<<std::endl;
       return_path(v, u, root);
       std::cout<< "Path was found"<<std::endl;
       std::cout<< "Path Size"<<path.size()<<std::endl;
