@@ -21,15 +21,20 @@ int visited[N][N] = {0}; // Marking all nodes as unvisited
                               /*Node for BFS*/
 class Node{
   public:
+  std::pair<int,int> its_indx;
   std::pair<int,int> parent; // This stores index of the parent w.r.t 2d map obtained
   std::vector<std::pair<int,int>> children; // This stores the indices of all the "unoccupied children" of the current Node
-  Node(){
-    parent.first  = -1; // initiallizing as null
-    parent.second = -1; // initiallizing as null
-  }
 
   // giving indices to the parent of the given class
+
   Node(int i, int j){
+    its_indx.first = i;
+    its_indx.second = j;
+  }
+
+  Node(int i, int j, int i1, int j1){
+    its_indx.first = i1;
+    its_indx.second = j1;
     parent.first  = i; // initializing as parent and children still null
     parent.second = j; // initializing as parent and children still null
     // children.clear();  // When initializing a new node there is no child
@@ -127,9 +132,7 @@ void BFS_graph_builder(Node* &root, int i, int  j){
     
     if( i+1 < n1 ){ // Seeing whether the index is even feasible or not
       //Setting a parent
-      Node* child = new Node({i+1, j});
-      child->parent = {i, j};
-      //Setting a Child
+      Node* child = new Node(i,j,i+1, j);
       root->children.push_back({i+1,j});
       Que.push({i+1,j});
       visited[i+1][j] = 1;
@@ -140,8 +143,7 @@ void BFS_graph_builder(Node* &root, int i, int  j){
   if(data_2d[i][j+1] == 0 && visited[i][j+1] == 0){
     
     if( j+1 < m ){
-      Node* child = new Node({i, j+1});
-      child->parent = {i, j};
+      Node* child = new Node(i,j,i, j+1);
 
       root->children.push_back({i,j+1});
       Que.push({i,j+1});
@@ -152,9 +154,7 @@ void BFS_graph_builder(Node* &root, int i, int  j){
   if(data_2d[i+1][j+1] == 0 && visited[i+1][j+1] == 0){
     
     if( i+1 < n1 and j+1 < m ){
-      Node* child = new Node({i+1, j+1});
-      child->parent = {i, j};
-
+      Node* child = new Node(i,j,i+1, j+1);
       root->children.push_back({i+1,j+1});
       Que.push({i+1,j+1});
       visited[i+1][j+1] = 1;
@@ -165,9 +165,7 @@ void BFS_graph_builder(Node* &root, int i, int  j){
   if(data_2d[i-1][j+1] == 0 && visited[i][j+1] == 0){
     
     if( i-1 >= 0 and j+1 < m){
-      Node* child = new Node({i-1, j+1});
-      child->parent = {i, j};
-
+      Node* child = new Node(i,j,i-1, j+1);
       root->children.push_back({i-1,j+1});
       Que.push({i-1,j+1});
       visited[i][j+1] = 1;
@@ -178,9 +176,7 @@ void BFS_graph_builder(Node* &root, int i, int  j){
   if(data_2d[i-1][j] == 0 && visited[i-1][j] == 0){
     
     if( i-1 >= 0 ){
-      Node* child = new Node({i-1, j});
-      child->parent = {i, j};
-
+      Node* child = new Node(i,j,i-1, j);
       root->children.push_back({i-1,j});
       Que.push({i-1,j});
       visited[i-1][j] = 1;
@@ -190,8 +186,7 @@ void BFS_graph_builder(Node* &root, int i, int  j){
   if(data_2d[i][j-1] == 0 && visited[i][j-1] == 0){
     
     if( j >= 0 ){
-      Node* child = new Node({i, j-1});
-      child->parent = {i, j};
+      Node* child = new Node(i,j,i, j-1);
 
       root->children.push_back({i,j-1});
       Que.push({i,j-1});
@@ -202,8 +197,7 @@ void BFS_graph_builder(Node* &root, int i, int  j){
   if(data_2d[i-1][j-1] == 0 && visited[i-1][j-1] == 0){
     
     if(i-1 >= 0 and j-1 >= 0){
-      Node* child = new Node({i-1, j-1});
-      child->parent = {i, j};
+      Node* child = new Node(i,j,i-1, j-1);
 
       root->children.push_back({i-1,j-1});
       Que.push({i-1,j-1});
@@ -214,9 +208,7 @@ void BFS_graph_builder(Node* &root, int i, int  j){
   if(data_2d[i+1][j-1] == 0 && visited[i+1][j-1] == 0){
     
     if( i+1 < n1 and j-1 >= 0 ){
-      Node* child = new Node({i+1, j-1});
-      child->parent = {i, j};
-
+      Node* child = new Node(i,j,i+1, j-1);
       root->children.push_back({i+1,j-1});
       Que.push({i+1,j-1});
       visited[i+1][j-1] = 1;
@@ -227,24 +219,22 @@ void BFS_graph_builder(Node* &root, int i, int  j){
 
 //--------------------------------------------------------------------------//
                         // ## Returning Path ## //
-std::vector<std::pair<int,int>> return_path(std::pair<int,int> final_index, std::pair<int,int> initial_index, Node* &root){
-  std::pair<int,int> parentx;
-  std::cout<<"This function was called"<<std::endl;
-  if(final_index.first == initial_index.first && final_index.second == initial_index.second){
-    path.push_back(initial_index);
-    std::cout<<"This step was reached"<<std::endl;
+std::vector<std::pair<int,int>> return_path(std::pair<int,int> curr_index, std::pair<int,int> initial_index, Node* &root){
+  std::pair<int,int> indices = root->parent;
+  if(curr_index == initial_index){
+    path.push_back({indices.first,indices.second});
     return path;
   }
-  else if(final_index.first < 0 && final_index.second < 0){
+
+  if(curr_index.first < 0 and curr_index.second < 0){
     path.clear();
-    path.push_back({-1,-1});
-    std::cout<<"This step was also reached"<<std::endl;
     return path;
   }
-  parentx = root->parent;
-  root = new Node(root->parent.first, root->parent.second); // Now going back to the parent
-  path.push_back(parentx);
-  return_path(final_index, initial_index, root);
+
+  path.push_back({indices.first,indices.second});
+  curr_index = indices;
+  root = new Node(curr_index.first, curr_index.second);
+  path = return_path(curr_index, initial_index, root);
 }
 //--------------------------------------------------------------------------//
 
@@ -285,7 +275,7 @@ int main() {
   v = distance_to_pixel(des_x, des_y);
   // std::cout << u.first<<"  "<< u.second <<std::endl;
   // std::cout << v.first<<"  "<< v.second <<std::endl;
-  Node* root = new Node(); // Initial root cannot have a parent
+  Node* root = new Node(-1,-1,u.first,u.second); // Initial root cannot have a parent
    // Marking current node as visited
   visited[u.first][u.second] = 1;
   Que.push({u.first,u.second});
@@ -330,7 +320,7 @@ int main() {
       return 0;
     }
 
-    Node* root = new Node(indx.first, indx.second);// Now going to the First Child
+    Node* root = new Node(root->parent.first,root->parent.second,indx.first, indx.second);// Now going to the First Child
     
     BFS_graph_builder(root, indx.first, indx.second); // Now building the graph further
 
