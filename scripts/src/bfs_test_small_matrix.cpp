@@ -45,25 +45,6 @@ class Node{
   }
 };
 //--------------------------------------------------------------------------//
-
-//--------------------------------------------------------------------------//
-    /*Functions with one time use*/
-
-// void currentMap(const nav_msgs::OccupancyGrid::ConstPtr &msg)
-// {
-
-//   n1 = msg->info.width;
-//   m = msg->info.height;
-//   for(int i = 0 ; i < n1*m ; i++){
-    
-//     data1[i] = (msg->data[i]);
-//   }
-
-// }
-
-/* We need the odometry data to know where exactly are we present in the map*/
-
-
 //--------------------------------------------------------------------------// 
 
 void get_2d_map(int data1[]){
@@ -117,16 +98,6 @@ void BFS_graph_builder(Node* &root, int i, int  j){
   // Now we will be checking each free node which is in the-
   // neighbourhood of range 1 pixel in the environment.
   visited[i][j] = 1; // Marking current node as visited too
-
-  // ---##########--- Uncomment for testing purposes only ----############----//
-  // std::cout<<"i and j are "<
-  // for(int t = 0; t< 5 ; t++){
-  //   for(int t2 = 0 ; t2<5 ; t2++){
-  //     std::cout<<visited[t][t2];
-  //   }
-  //   std::cout<<std::endl;
-  // }
-
 
   if(data_2d[i+1][j] == 0 && visited[i+1][j] == 0){
     
@@ -239,15 +210,7 @@ std::vector<std::pair<int,int>> return_path(std::pair<int,int> curr_index, std::
 //--------------------------------------------------------------------------//
 
 int main() {
-//   ros::init(argc, argv, "map_interpretor");
 
-//   ros::NodeHandle n; // We are going to print the path directly so no need for ROS this point of time
-  // Subscribing to map topic where all the data of the map is coming from
-//   ros::Subscriber subscriber = n.subscribe("map",1000, currentMap); - > Give the map manually of 5x5 size
-  // Subscribing to odometry topic to get the pose estimate
-//   ros::Subscriber odo_sub = n.subscribe("odom", 1000, get_position); - > Give the position manually
-//   ros::Publisher path_publisher = n.advertise<scripts::Points>("path_sub", 1); - > Instead of this we just print the indices of the path that we get from the path builder
-//   ros::Rate rate(10);
   int count = 0;
     // ros::Duration current_time(ros::Time::now().toSec()); /* current time*/ - > As such no need for this at this point of time
   get_2d_map(data1); //got the 2d map to operate upon
@@ -263,22 +226,18 @@ int main() {
   std::pair<int,int> u;
   std::pair<int,int> v; // pixels of the current grid cell
   std::vector<std::pair<int,int>> path; // This is going to be the path we traversed
-  // scripts::Points msg; // This is going to be the final published path
 
-  /// Testing of these things will be done later ///
-  // geometry_msgs::Point  path_pub[N];
-  // geometry_msgs::Point point_pub;
   std::cout<<"Enter the values for desired coordinates : x  y  and orientation : Theta ";
   std::cin>>des_x>>des_y>>des_theta;
-  // std::cout<<curr_y<<std::endl;
+
   u = distance_to_pixel(curr_x, curr_y);
   v = distance_to_pixel(des_x, des_y);
-  // std::cout << u.first<<"  "<< u.second <<std::endl;
-  // std::cout << v.first<<"  "<< v.second <<std::endl;
+
   Node* root = new Node(-1,-1,u.first,u.second); // Initial root cannot have a parent
    // Marking current node as visited
   visited[u.first][u.second] = 1;
   Que.push({u.first,u.second});
+
 //--------------------------------------------------------------------------//
   /*BFS Function declared Up there
     Arguments:
@@ -327,12 +286,3 @@ int main() {
   } 
   return 0;
 }
-
-
-/*
-// 
-
-  ####################################### Algorithm for the Code #####################################
-
-//
-*/
