@@ -18,6 +18,7 @@
 
 #include "turtlebot3_gazebo/turtlebot3_drive.h"
 
+
 Turtlebot3Drive::Turtlebot3Drive()
   : nh_priv_("~")
 {
@@ -163,6 +164,7 @@ int main(int argc, char* argv[])
 {
   ros::init(argc, argv, "turtlebot3_drive");
   Turtlebot3Drive turtlebot3_drive;
+  ros::NodeHandle n;
 
   ros::Rate loop_rate(125);
 
