@@ -160,6 +160,26 @@ void BFS_stack_builder(int i, int  j){
 
   }
 
+// South-East
+  if(visited[i+1][j+1] == 0){  
+
+    if( i+1 < rows and j+1 < columns ){ // Seeing whether the index is even feasible or no
+      layer.push_back({{i,j},{i+1,j+1}}); // Parent is go ing to be its current node
+      visited[i+1][j+1] = 1;
+    }
+
+  }
+
+// North-East
+  if(visited[i+1][j-1] == 0){  
+
+    if( i+1 < rows and j-1 >= 0 ){ // Seeing whether the index is even feasible or no
+      layer.push_back({{i,j},{i+1,j-1}}); // Parent is go ing to be its current node
+      visited[i+1][j-1] = 1;
+    }
+
+  }
+
 // South
   if(visited[i][j+1] == 0){
     
@@ -176,6 +196,26 @@ void BFS_stack_builder(int i, int  j){
     if( i-1 >= 0 ){
       layer.push_back({{i,j},{i-1,j}});
       visited[i-1][j] = 1;
+    }
+
+  }
+
+// North-West
+  if(visited[i-1][j-1] == 0 ){
+    
+    if( i-1 >= 0 and j-1 >= 0 ){
+      layer.push_back({{i,j},{i-1,j-1}});
+      visited[i-1][j-1] = 1;
+    }
+
+  }
+
+// South-West
+  if(visited[i-1][j+1] == 0 ){
+    
+    if( i-1 >= 0 and j+1 >= 0 ){
+      layer.push_back({{i,j},{i-1,j+1}});
+      visited[i-1][j+1] = 1;
     }
 
   }
