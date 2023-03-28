@@ -24,7 +24,7 @@
   Funcitonality :   Publish a path for move_base
   Returns       :   bool that describes whether path is beign published or not
 */
-bool  make_plan(pp_msgs::PathPlanningPlugin::Request &req, pp_msgs::PathPlanningPlugin::Response &res){
+bool make_plan(pp_msgs::PathPlanningPlugin::Request &req, pp_msgs::PathPlanningPlugin::Response &res){
   std::vector<int> costmap;
   std::vector<int> path_bfs;
   costmap = req.costmap_ros;
@@ -70,8 +70,10 @@ int main(int argc, char **argv) {
   
   // ########################## Creating Ros nodes, Subsciber, and Publishers ########################## //
   ros::init(argc, argv, "bfs_server");
-  ros::NodeHandle n;      // Creating a nodehandler to make relevant subscribers and publishers
 
+  // Creating a nodehandler to make relevant subscribers and publishers
+  ros::NodeHandle n;    
+  
   ros::Subscriber subscriber = n.subscribe("map",1000, currentMap);   // Subscribing to map topic
   ros::Subscriber odo_sub = n.subscribe("odom", 1000, get_position);  // Subscribing to odom topic
 
