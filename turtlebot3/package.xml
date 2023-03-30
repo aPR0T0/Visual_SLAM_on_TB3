@@ -58,12 +58,9 @@
   <build_depend>roscpp</build_depend>
   <build_depend>std_msgs</build_depend>
   <build_depend>nav_core</build_depend>
-<<<<<<< HEAD:turtlebot3/package.xml
-  <build_depend>pcl</build_depend>
   <build_depend>pcl_ros</build_depend>
+  <build_depend>sensor_msgs</build_depend>
   <build_depend>pcl_conversions</build_depend>
-=======
->>>>>>> b7282c4a9c56b228f485a3bc1795d231c8b17ff5:scripts/package.xml
   <build_depend>pp_msgs</build_depend>
   <build_depend>base_local_planner</build_depend>
   <build_export_depend>costmap_2d</build_export_depend>
@@ -74,12 +71,10 @@
   <build_export_depend>base_local_planner</build_export_depend>
   <build_export_depend>actionlib</build_export_depend>
   <build_export_depend>move_base_msgs</build_export_depend>
-<<<<<<< HEAD:turtlebot3/package.xml
   <build_export_depend>pcl</build_export_depend>
   <build_export_depend>pcl_ros</build_export_depend>
+  <build_export_depend>sensor_msgs</build_export_depend>
   <build_export_depend>pcl_conversions</build_export_depend>
-=======
->>>>>>> b7282c4a9c56b228f485a3bc1795d231c8b17ff5:scripts/package.xml
   <build_export_depend>dynamic_reconfigure</build_export_depend>
   <build_export_depend>roscpp</build_export_depend>
   <exec_depend>costmap_2d</exec_depend>
@@ -91,12 +86,9 @@
   <exec_depend>geometry_msgs</exec_depend>
   <exec_depend>actionlib</exec_depend>
   <exec_depend>nav_core</exec_depend>
-<<<<<<< HEAD:turtlebot3/package.xml
-  <exec_depend>pcl</exec_depend>
   <exec_depend>pcl_ros</exec_depend>
+  <exec_depend>sensor_msgs</exec_depend>
   <exec_depend>pcl_conversions</exec_depend>
-=======
->>>>>>> b7282c4a9c56b228f485a3bc1795d231c8b17ff5:scripts/package.xml
   <exec_depend>base_local_planner</exec_depend>
   <exec_depend>amcl</exec_depend>
   <exec_depend>map_server</exec_depend>
