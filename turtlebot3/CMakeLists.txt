@@ -18,8 +18,11 @@ find_package(catkin REQUIRED COMPONENTS
   dynamic_reconfigure
   roscpp
   std_msgs
+  sensor_msgs
   pp_msgs
   message_generation
+  pcl_conversions
+  pcl_ros
 )
 
 ## System dependencies are found with CMake's conventions
@@ -140,8 +143,10 @@ add_library(global_planner_lib
 ## Declare a C++ executable
 ## With catkin_make all packages are built within a single CMake context
 ## The recommended prefix ensures that target names across packages don't collide
-add_executable(bfs_server src/bfs_server.cpp)
-add_executable(bfs src/bfs.cpp)
+
+# second executable needs to be merged with the first in the next stage
+add_executable(bfs_server src/bfs_server.cpp src/bfs.cpp)
+add_executable(pcl_server mapping/oakD.cpp mapping/sensor_fusion.cpp)
 
 ## Rename C++ executable without prefix
 ## The above recommended prefix causes long target names, the following renames the
@@ -156,17 +161,15 @@ add_executable(bfs src/bfs.cpp)
 ## Add cmake target dependencies of the executable
 ## same as for the library above
 add_dependencies(bfs_server ${${PROJECT_NAME}_EXPORTED_TARGETS} ${catkin_EXPORTED_TARGETS})
-add_dependencies(bfs ${${PROJECT_NAME}_EXPORTED_TARGETS} ${catkin_EXPORTED_TARGETS}) 
+add_dependencies(pcl_server ${${PROJECT_NAME}_EXPORTED_TARGETS} ${catkin_EXPORTED_TARGETS})   ## Needs to be merged later with the bfs_server
 
 ## Specify libraries to link a library or executable target against
 target_link_libraries(bfs_server
   ${catkin_LIBRARIES}
 )
-target_link_libraries(bfs
-
+target_link_libraries(pcl_server
   ${catkin_LIBRARIES}
 )
-
 #############
 ## Install ##
 #############
@@ -191,13 +194,17 @@ install(
   DESTINATION ${CATKIN_PACKAGE_INCLUDE_DESTINATION}
 )
 
+install(TARGETS bfs_server
+  ARCHIVE DESTINATION ${CATKIN_PACKAGE_LIB_DESTINATION}
+  LIBRARY DESTINATION ${CATKIN_PACKAGE_LIB_DESTINATION}
+  RUNTIME DESTINATION ${CATKIN_PACKAGE_BIN_DESTINATION})
 
 ## Mark cpp header files for installation
-# install(DIRECTORY include/${PROJECT_NAME}/
-#   DESTINATION ${CATKIN_PACKAGE_INCLUDE_DESTINATION}
-#   FILES_MATCHING PATTERN "*.h"
-#   PATTERN ".svn" EXCLUDE
-# )
+install(DIRECTORY include/
+  DESTINATION ${CATKIN_PACKAGE_INCLUDE_DESTINATION}
+  FILES_MATCHING PATTERN "*.h"
+  PATTERN ".svn" EXCLUDE
+)
 
 ## Mark other files for installation (e.g. launch and bag files, etc.)
 # install(FILES
