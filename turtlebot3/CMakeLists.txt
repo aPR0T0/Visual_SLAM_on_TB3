@@ -1,5 +1,13 @@
 cmake_minimum_required(VERSION 3.0.2)
+<<<<<<< HEAD
 project(turtlebot3)
+=======
+<<<<<<< HEAD:pp_msgs/CMakeLists.txt
+project(pp_msgs)
+=======
+project(turtlebot3)
+>>>>>>> b7282c4a9c56b228f485a3bc1795d231c8b17ff5:turtlebot3/CMakeLists.txt
+>>>>>>> b7282c4a9c56b228f485a3bc1795d231c8b17ff5
 
 ## Compile as C++11, supported in ROS Kinetic and newer
 # add_compile_options(-std=c++11)
@@ -8,6 +16,14 @@ project(turtlebot3)
 ## if COMPONENTS list like find_package(catkin REQUIRED COMPONENTS xyz)
 ## is used, also find other catkin packages
 find_package(catkin REQUIRED COMPONENTS
+<<<<<<< HEAD
+=======
+<<<<<<< HEAD:pp_msgs/CMakeLists.txt
+  message_generation
+  roscpp
+  std_msgs
+=======
+>>>>>>> b7282c4a9c56b228f485a3bc1795d231c8b17ff5
   actionlib
   nav_core
   nav_msgs
@@ -20,6 +36,10 @@ find_package(catkin REQUIRED COMPONENTS
   std_msgs
   pp_msgs
   message_generation
+<<<<<<< HEAD
+=======
+>>>>>>> b7282c4a9c56b228f485a3bc1795d231c8b17ff5:turtlebot3/CMakeLists.txt
+>>>>>>> b7282c4a9c56b228f485a3bc1795d231c8b17ff5
 )
 
 ## System dependencies are found with CMake's conventions
@@ -56,6 +76,7 @@ find_package(catkin REQUIRED COMPONENTS
 ##   * add every package in MSG_DEP_SET to generate_messages(DEPENDENCIES ...)
 
 ## Generate messages in the 'msg' folder
+<<<<<<< HEAD
 add_message_files(
   FILES
   Points.msg
@@ -68,6 +89,19 @@ add_message_files(
 #   Service1.srv
 #   Service2.srv
 # )
+=======
+# add_message_files(
+#   FILES
+#   Message1.msg
+#   Message2.msg
+# )
+
+## Generate services in the 'srv' folder
+add_service_files(
+  FILES
+  PathPlanningPlugin.srv
+)
+>>>>>>> b7282c4a9c56b228f485a3bc1795d231c8b17ff5
 
 ## Generate actions in the 'action' folder
 # add_action_files(
@@ -79,9 +113,15 @@ add_message_files(
 ## Generate added messages and services with any dependencies listed here
 generate_messages(
   DEPENDENCIES
+<<<<<<< HEAD
   geometry_msgs
   std_msgs
 )
+=======
+  std_msgs
+)
+
+>>>>>>> b7282c4a9c56b228f485a3bc1795d231c8b17ff5
 ################################################
 ## Declare ROS dynamic reconfigure parameters ##
 ################################################
@@ -112,9 +152,21 @@ generate_messages(
 ## CATKIN_DEPENDS: catkin_packages dependent projects also need
 ## DEPENDS: system dependencies of this project that dependent projects also need
 catkin_package(
+<<<<<<< HEAD
   INCLUDE_DIRS include
   LIBRARIES ${PROJECT_NAME}
   CATKIN_DEPENDS geometry_msgs roscpp std_msgs message_runtime
+=======
+<<<<<<< HEAD:pp_msgs/CMakeLists.txt
+#  INCLUDE_DIRS include
+#  LIBRARIES pp_msgs
+#  CATKIN_DEPENDS message_generation roscpp rospy std_msgs
+=======
+  INCLUDE_DIRS include
+  LIBRARIES ${PROJECT_NAME}
+  CATKIN_DEPENDS geometry_msgs roscpp std_msgs message_runtime
+>>>>>>> b7282c4a9c56b228f485a3bc1795d231c8b17ff5:turtlebot3/CMakeLists.txt
+>>>>>>> b7282c4a9c56b228f485a3bc1795d231c8b17ff5
 #  DEPENDS system_lib
 )
 ###########
@@ -124,14 +176,32 @@ catkin_package(
 ## Specify additional locations of header files
 ## Your package locations should be listed before other locations
 include_directories(
+<<<<<<< HEAD
  include
   ${catkin_INCLUDE_DIRS}
 )
 
+=======
+# include
+  ${catkin_INCLUDE_DIRS}
+)
+
+<<<<<<< HEAD:pp_msgs/CMakeLists.txt
+## Declare a C++ library
+# add_library(${PROJECT_NAME}
+#   src/${PROJECT_NAME}/pp_msgs.cpp
+# )
+
+=======
+>>>>>>> b7282c4a9c56b228f485a3bc1795d231c8b17ff5
 ## Declare a C++ library  
 add_library(global_planner_lib 
   src/global_planner.cpp
 )
+<<<<<<< HEAD
+=======
+>>>>>>> b7282c4a9c56b228f485a3bc1795d231c8b17ff5:turtlebot3/CMakeLists.txt
+>>>>>>> b7282c4a9c56b228f485a3bc1795d231c8b17ff5
 ## Add cmake target dependencies of the library
 ## as an example, code may need to be generated before libraries
 ## either from message generation or dynamic reconfigure
@@ -140,7 +210,16 @@ add_library(global_planner_lib
 ## Declare a C++ executable
 ## With catkin_make all packages are built within a single CMake context
 ## The recommended prefix ensures that target names across packages don't collide
+<<<<<<< HEAD
 add_executable(bfs_server src/bfs_server.cpp src/bfs.cpp)
+=======
+<<<<<<< HEAD:pp_msgs/CMakeLists.txt
+# add_executable(${PROJECT_NAME}_node src/pp_msgs_node.cpp)
+=======
+add_executable(bfs_server src/bfs_server.cpp)
+add_executable(bfs src/bfs.cpp)
+>>>>>>> b7282c4a9c56b228f485a3bc1795d231c8b17ff5:turtlebot3/CMakeLists.txt
+>>>>>>> b7282c4a9c56b228f485a3bc1795d231c8b17ff5
 
 ## Rename C++ executable without prefix
 ## The above recommended prefix causes long target names, the following renames the
@@ -154,12 +233,34 @@ add_executable(bfs_server src/bfs_server.cpp src/bfs.cpp)
 
 ## Add cmake target dependencies of the executable
 ## same as for the library above
+<<<<<<< HEAD
 add_dependencies(bfs_server ${${PROJECT_NAME}_EXPORTED_TARGETS} ${catkin_EXPORTED_TARGETS})
+=======
+<<<<<<< HEAD:pp_msgs/CMakeLists.txt
+# add_dependencies(${PROJECT_NAME}_node ${${PROJECT_NAME}_EXPORTED_TARGETS} ${catkin_EXPORTED_TARGETS})
+
+## Specify libraries to link a library or executable target against
+# target_link_libraries(${PROJECT_NAME}_node
+#   ${catkin_LIBRARIES}
+# )
+=======
+add_dependencies(bfs_server ${${PROJECT_NAME}_EXPORTED_TARGETS} ${catkin_EXPORTED_TARGETS})
+add_dependencies(bfs ${${PROJECT_NAME}_EXPORTED_TARGETS} ${catkin_EXPORTED_TARGETS}) 
+>>>>>>> b7282c4a9c56b228f485a3bc1795d231c8b17ff5
 
 ## Specify libraries to link a library or executable target against
 target_link_libraries(bfs_server
   ${catkin_LIBRARIES}
 )
+<<<<<<< HEAD
+=======
+target_link_libraries(bfs
+
+  ${catkin_LIBRARIES}
+)
+>>>>>>> b7282c4a9c56b228f485a3bc1795d231c8b17ff5:turtlebot3/CMakeLists.txt
+
+>>>>>>> b7282c4a9c56b228f485a3bc1795d231c8b17ff5
 #############
 ## Install ##
 #############
@@ -184,6 +285,7 @@ install(
   DESTINATION ${CATKIN_PACKAGE_INCLUDE_DESTINATION}
 )
 
+<<<<<<< HEAD
 install(TARGETS bfs_server
   ARCHIVE DESTINATION ${CATKIN_PACKAGE_LIB_DESTINATION}
   LIBRARY DESTINATION ${CATKIN_PACKAGE_LIB_DESTINATION}
@@ -195,6 +297,15 @@ install(DIRECTORY include/
   FILES_MATCHING PATTERN "*.h"
   PATTERN ".svn" EXCLUDE
 )
+=======
+
+## Mark cpp header files for installation
+# install(DIRECTORY include/${PROJECT_NAME}/
+#   DESTINATION ${CATKIN_PACKAGE_INCLUDE_DESTINATION}
+#   FILES_MATCHING PATTERN "*.h"
+#   PATTERN ".svn" EXCLUDE
+# )
+>>>>>>> b7282c4a9c56b228f485a3bc1795d231c8b17ff5
 
 ## Mark other files for installation (e.g. launch and bag files, etc.)
 # install(FILES
@@ -208,7 +319,11 @@ install(DIRECTORY include/
 #############
 
 ## Add gtest based cpp test target and link libraries
+<<<<<<< HEAD
 # catkin_add_gtest(${PROJECT_NAME}-test test/test_scripts.cpp)
+=======
+# catkin_add_gtest(${PROJECT_NAME}-test test/test_pp_msgs.cpp)
+>>>>>>> b7282c4a9c56b228f485a3bc1795d231c8b17ff5
 # if(TARGET ${PROJECT_NAME}-test)
 #   target_link_libraries(${PROJECT_NAME}-test ${PROJECT_NAME})
 # endif()

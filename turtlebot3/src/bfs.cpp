@@ -14,7 +14,10 @@
 #include "turtlebot3/Points.h"
 #include "bits/stdc++.h"
 #include "algorithm"
+<<<<<<< HEAD
 #include "bfs.h"
+=======
+>>>>>>> b7282c4a9c56b228f485a3bc1795d231c8b17ff5
 
 // #################################################### //
 
@@ -154,12 +157,17 @@ void BFS_stack_builder(int i, int  j){
   if(visited[i+1][j] == 0){  
 
     if( i+1 < rows ){ // Seeing whether the index is even feasible or no
+<<<<<<< HEAD
       layer.push_back({{i,j},{i+1,j}}); // Parent is go ing to be its current node
+=======
+      layer.push_back({{i,j},{i+1,j}}); // Parent is going to be its current node
+>>>>>>> b7282c4a9c56b228f485a3bc1795d231c8b17ff5
       visited[i+1][j] = 1;
     }
 
   }
 
+<<<<<<< HEAD
 // South-East
   if(visited[i+1][j+1] == 0){  
 
@@ -180,6 +188,8 @@ void BFS_stack_builder(int i, int  j){
 
   }
 
+=======
+>>>>>>> b7282c4a9c56b228f485a3bc1795d231c8b17ff5
 // South
   if(visited[i][j+1] == 0){
     
@@ -200,6 +210,7 @@ void BFS_stack_builder(int i, int  j){
 
   }
 
+<<<<<<< HEAD
 // North-West
   if(visited[i-1][j-1] == 0 ){
     
@@ -220,6 +231,8 @@ void BFS_stack_builder(int i, int  j){
 
   }
 
+=======
+>>>>>>> b7282c4a9c56b228f485a3bc1795d231c8b17ff5
 // North
   if(visited[i][j-1] == 0){
     
@@ -283,11 +296,19 @@ std::pair<int,int> build_a_tree( int layer_element_count, int flag, std::pair<in
 */   
 void build_path_from_stack(std::pair<int,int> final_index, std::pair<int,int> indx_parent){
 
+<<<<<<< HEAD
   if(path_pub_count >= 0){ // Cheching whether the path has been previously built or not
 
     path.push_back(final_index); // Pushing the Final Index
     stack_layer.pop();
     path.clear();
+=======
+  if(path_pub_count == 0){ // Cheching whether the path has been previously built or not
+
+    path.push_back(final_index); // Pushing the Final Index
+    stack_layer.pop();
+
+>>>>>>> b7282c4a9c56b228f485a3bc1795d231c8b17ff5
     std::cout<< "Final index was found\n"; // Just to know whether we have been successful or not
     std::vector<std::pair<std::pair<int,int>, std::pair<int,int>>> templayer; // This layer just stores the top of the stack elements
 
@@ -308,6 +329,7 @@ void build_path_from_stack(std::pair<int,int> final_index, std::pair<int,int> in
 
     }
   }
+<<<<<<< HEAD
   layer.clear();
   path_pub_count++;
 
@@ -398,3 +420,120 @@ turtlebot3::Points bfs(int start_index, int end_index, int width, int height, fl
   }
   return P_msg;
 }
+=======
+
+  path_pub_count++;
+
+  for(auto &xt: path){
+    std::cout<<xt.first<<" "<<xt.second<<std::endl;
+  }
+}
+
+
+// ##################################################################################################### //
+// #####################################     Main Function    ########################################## //
+// ##################################################################################################### //
+
+int main(int argc, char **argv) {
+  
+  // ########################## Creating Ros nodes, Subsciber, and Publishers ########################## //
+  ros::init(argc, argv, "map_interpretor");
+  ros::NodeHandle n;      // Creating a nodehandler to make relevant subscribers and publishers
+
+  ros::Subscriber subscriber = n.subscribe("map",1000, currentMap);   // Subscribing to map topic
+  ros::Subscriber odo_sub = n.subscribe("odom", 1000, get_position);  // Subscribing to odom topic
+
+  ros::Publisher path_publisher = n.advertise<turtlebot3::Points>("path_sub", 1000); // Creating a Publishing node for the path
+  ros::Rate rate(1);   // Defining a rate for overall ros operations
+  int count = 0;
+
+  // Getting the target from the user
+  std::cout<<"Please Enter the Location in RVIZ and put the orientation here : \n"<<std::endl;
+  std::cin>>des_x>>des_y;
+  std::cin>>des_theta;
+
+  tar_sub_count++;
+
+  while (ros::ok())
+  {
+
+    get_2d_map(data1); //got the 2d map to operate upon
+    std::pair<int,int> initial_index, final_index; // pixels of the current grid cell
+    turtlebot3::Points P_msg; // This is going to be the final published path
+    geometry_msgs::Point  point_pub;
+
+    if(odom_sub_count > 0 and tar_sub_count > 0){ // Just checking if the subscription is done or not
+
+      initial_index = distance_to_pixel(curr_x, curr_y);
+      final_index = distance_to_pixel(des_x, des_y);
+      ROS_INFO("START x %d START y %d, END x %d END y %d\n", initial_index.first, initial_index.second, final_index.first, final_index.second);
+      visited[initial_index.first][initial_index.second] = 1; // Marking the Current node as visited
+
+      layer.push_back({{-1,-1},{initial_index.first,initial_index.second}});  // Initialzing layer0 with the First node later the elements will be added into it
+      stack_layer.push(layer);  // Now, Stack is a collection of all layers till the final index
+
+      int flag = layer.size()-1; // Flag is the signal that all the possible children in the current array has been added and now u can move on to the next layer
+
+      int layer_element_count = 0; // this will check if all the elements in the layer has been traversed or not
+
+      // ############################################################################################### //
+      std::pair<int,int> indx_parent;
+      indx_parent = build_a_tree(flag, layer_element_count, final_index); // This will give us the parent of the final node 
+
+      if(final_index_found){
+
+        build_path_from_stack(final_index, indx_parent);
+
+      } 
+      else{
+        std::cout<<"No path Exists"<<std::endl;
+        break;
+      }
+      // Now as there is some path existing 
+
+    }
+
+    // ############### Converting the path in terms of the message that we are going to publish ############# //
+    int x_t = path.size();
+    std::cout<<"flag: "<<x_t<<std::endl;
+    geometry_msgs::Point path_pub[x_t];
+
+    for(int i = 0; i < path.size() ; i++){
+      std::pair<double,double> path_temp;
+      path_temp = pixel_to_distance(path[i].first, path[i].second);
+      
+      point_pub.x = path_temp.first;
+      point_pub.y = path_temp.second;
+      path_pub[i] = point_pub; 
+    }
+
+    P_msg.points.clear();
+    P_msg.end_index = des_theta;
+    int index_z = 0;
+    // Now declaring the messages with the help of the points
+    for (auto &it : path_pub) {
+        geometry_msgs::Point point;
+        point.x = (it).x;
+        point.y = (it).y;
+        point.z = 0;
+        P_msg.points.push_back(point);
+        index_z++;
+    }
+    for(int j = 0; j<path.size() ; j++){
+        std::cout<<"x : "<<P_msg.points[j].x<<" y : "<<P_msg.points[j].y<<std::endl;
+    }
+  
+
+    path_publisher.publish(P_msg);
+    ros::spinOnce();
+
+    rate.sleep();
+    ++count;
+  }
+  return 0;
+}
+
+// ############################################################################################## //
+// #######################################  The End  ############################################ //
+// ############################################################################################## //
+>>>>>>> b7282c4a9c56b228f485a3bc1795d231c8b17ff5

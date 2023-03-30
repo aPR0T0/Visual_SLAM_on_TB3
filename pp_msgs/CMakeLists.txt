@@ -1,5 +1,13 @@
 cmake_minimum_required(VERSION 3.0.2)
+<<<<<<< HEAD
+<<<<<<< HEAD:pp_msgs/CMakeLists.txt
 project(pp_msgs)
+=======
+project(turtlebot3)
+>>>>>>> b7282c4a9c56b228f485a3bc1795d231c8b17ff5:turtlebot3/CMakeLists.txt
+=======
+project(pp_msgs)
+>>>>>>> b7282c4a9c56b228f485a3bc1795d231c8b17ff5
 
 ## Compile as C++11, supported in ROS Kinetic and newer
 # add_compile_options(-std=c++11)
@@ -8,9 +16,30 @@ project(pp_msgs)
 ## if COMPONENTS list like find_package(catkin REQUIRED COMPONENTS xyz)
 ## is used, also find other catkin packages
 find_package(catkin REQUIRED COMPONENTS
+<<<<<<< HEAD
+<<<<<<< HEAD:pp_msgs/CMakeLists.txt
   message_generation
   roscpp
   std_msgs
+=======
+  actionlib
+  nav_core
+  nav_msgs
+  tf
+  base_local_planner
+  move_base_msgs
+  costmap_2d
+  dynamic_reconfigure
+  roscpp
+  std_msgs
+  pp_msgs
+  message_generation
+>>>>>>> b7282c4a9c56b228f485a3bc1795d231c8b17ff5:turtlebot3/CMakeLists.txt
+=======
+  message_generation
+  roscpp
+  std_msgs
+>>>>>>> b7282c4a9c56b228f485a3bc1795d231c8b17ff5
 )
 
 ## System dependencies are found with CMake's conventions
@@ -102,12 +131,26 @@ generate_messages(
 ## CATKIN_DEPENDS: catkin_packages dependent projects also need
 ## DEPENDS: system dependencies of this project that dependent projects also need
 catkin_package(
+<<<<<<< HEAD
+<<<<<<< HEAD:pp_msgs/CMakeLists.txt
+#  INCLUDE_DIRS include
+#  LIBRARIES pp_msgs
+#  CATKIN_DEPENDS message_generation roscpp rospy std_msgs
+=======
+  INCLUDE_DIRS include
+  LIBRARIES ${PROJECT_NAME}
+  CATKIN_DEPENDS geometry_msgs roscpp std_msgs message_runtime
+>>>>>>> b7282c4a9c56b228f485a3bc1795d231c8b17ff5:turtlebot3/CMakeLists.txt
+#  DEPENDS system_lib
+)
+=======
 #  INCLUDE_DIRS include
 #  LIBRARIES pp_msgs
 #  CATKIN_DEPENDS message_generation roscpp rospy std_msgs
 #  DEPENDS system_lib
 )
 
+>>>>>>> b7282c4a9c56b228f485a3bc1795d231c8b17ff5
 ###########
 ## Build ##
 ###########
@@ -119,11 +162,24 @@ include_directories(
   ${catkin_INCLUDE_DIRS}
 )
 
+<<<<<<< HEAD
+<<<<<<< HEAD:pp_msgs/CMakeLists.txt
+=======
+>>>>>>> b7282c4a9c56b228f485a3bc1795d231c8b17ff5
 ## Declare a C++ library
 # add_library(${PROJECT_NAME}
 #   src/${PROJECT_NAME}/pp_msgs.cpp
 # )
 
+<<<<<<< HEAD
+=======
+## Declare a C++ library  
+add_library(global_planner_lib 
+  src/global_planner.cpp
+)
+>>>>>>> b7282c4a9c56b228f485a3bc1795d231c8b17ff5:turtlebot3/CMakeLists.txt
+=======
+>>>>>>> b7282c4a9c56b228f485a3bc1795d231c8b17ff5
 ## Add cmake target dependencies of the library
 ## as an example, code may need to be generated before libraries
 ## either from message generation or dynamic reconfigure
@@ -132,22 +188,59 @@ include_directories(
 ## Declare a C++ executable
 ## With catkin_make all packages are built within a single CMake context
 ## The recommended prefix ensures that target names across packages don't collide
+<<<<<<< HEAD
+<<<<<<< HEAD:pp_msgs/CMakeLists.txt
 # add_executable(${PROJECT_NAME}_node src/pp_msgs_node.cpp)
+=======
+add_executable(bfs_server src/bfs_server.cpp)
+add_executable(bfs src/bfs.cpp)
+>>>>>>> b7282c4a9c56b228f485a3bc1795d231c8b17ff5:turtlebot3/CMakeLists.txt
+=======
+# add_executable(${PROJECT_NAME}_node src/pp_msgs_node.cpp)
+>>>>>>> b7282c4a9c56b228f485a3bc1795d231c8b17ff5
 
 ## Rename C++ executable without prefix
 ## The above recommended prefix causes long target names, the following renames the
 ## target back to the shorter version for ease of user use
 ## e.g. "rosrun someones_pkg node" instead of "rosrun someones_pkg someones_pkg_node"
+<<<<<<< HEAD
+# set_target_properties(bfs_server PROPERTIES LINKER_LANGUAGE FIXED)
+
+# set_target_properties(bfs PROPERTIES LINKER_LANGUAGE FIXED)
+
+# set_target_properties(controller PROPERTIES LINKER_LANGUAGE FIXED)
+
+## Add cmake target dependencies of the executable
+## same as for the library above
+<<<<<<< HEAD:pp_msgs/CMakeLists.txt
+=======
 # set_target_properties(${PROJECT_NAME}_node PROPERTIES OUTPUT_NAME node PREFIX "")
 
 ## Add cmake target dependencies of the executable
 ## same as for the library above
+>>>>>>> b7282c4a9c56b228f485a3bc1795d231c8b17ff5
 # add_dependencies(${PROJECT_NAME}_node ${${PROJECT_NAME}_EXPORTED_TARGETS} ${catkin_EXPORTED_TARGETS})
 
 ## Specify libraries to link a library or executable target against
 # target_link_libraries(${PROJECT_NAME}_node
 #   ${catkin_LIBRARIES}
 # )
+<<<<<<< HEAD
+=======
+add_dependencies(bfs_server ${${PROJECT_NAME}_EXPORTED_TARGETS} ${catkin_EXPORTED_TARGETS})
+add_dependencies(bfs ${${PROJECT_NAME}_EXPORTED_TARGETS} ${catkin_EXPORTED_TARGETS}) 
+
+## Specify libraries to link a library or executable target against
+target_link_libraries(bfs_server
+  ${catkin_LIBRARIES}
+)
+target_link_libraries(bfs
+
+  ${catkin_LIBRARIES}
+)
+>>>>>>> b7282c4a9c56b228f485a3bc1795d231c8b17ff5:turtlebot3/CMakeLists.txt
+=======
+>>>>>>> b7282c4a9c56b228f485a3bc1795d231c8b17ff5
 
 #############
 ## Install ##
@@ -165,6 +258,16 @@ include_directories(
 
 ## Mark executables for installation
 ## See http://docs.ros.org/melodic/api/catkin/html/howto/format1/building_executables.html
+<<<<<<< HEAD
+
+## Mark libraries for installation
+## See http://docs.ros.org/melodic/api/catkin/html/howto/format1/building_libraries.html
+install(
+  DIRECTORY include/
+  DESTINATION ${CATKIN_PACKAGE_INCLUDE_DESTINATION}
+)
+
+=======
 # install(TARGETS ${PROJECT_NAME}_node
 #   RUNTIME DESTINATION ${CATKIN_PACKAGE_BIN_DESTINATION}
 # )
@@ -176,6 +279,7 @@ include_directories(
 #   LIBRARY DESTINATION ${CATKIN_PACKAGE_LIB_DESTINATION}
 #   RUNTIME DESTINATION ${CATKIN_GLOBAL_BIN_DESTINATION}
 # )
+>>>>>>> b7282c4a9c56b228f485a3bc1795d231c8b17ff5
 
 ## Mark cpp header files for installation
 # install(DIRECTORY include/${PROJECT_NAME}/
