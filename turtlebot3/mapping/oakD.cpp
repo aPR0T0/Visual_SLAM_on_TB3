@@ -37,15 +37,16 @@ void cloud_cb(const boost::shared_ptr<const sensor_msgs::PointCloud2>& input){
 
     for (auto &i : cloud.points){
         
-        helper.x =   i.x ;
-        helper.y = - i.y ;
-        helper.z =   i.z ;
+        if(i.z <= 0.6){
+            helper.x =   i.x ;
+            helper.y = - i.y ;
+            helper.z =   i.z ;
 
-        pcl_msg.points.push_back(helper);
+            pcl_msg.points.push_back(helper);
+        }
+    }   
 
-    }
-
-    pcl_msg.end_index = cloud.points.size() - 1;
+    pcl_msg.end_index = pcl_msg.points.size() - 1;
 }   
 
 

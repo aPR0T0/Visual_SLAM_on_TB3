@@ -85,8 +85,21 @@ void currentMap(const nav_msgs::OccupancyGrid::ConstPtr &msg)
 */
 void get_position(const nav_msgs::OdometryPtr& msg){
   odom_sub_count++;
+
   curr_x = msg->pose.pose.position.x;
   curr_y = msg->pose.pose.position.y;
+
+  tf::Quaternion q(
+      msg->pose.pose.orientation.x,
+      msg->pose.pose.orientation.y,
+      msg->pose.pose.orientation.z,
+      msg->pose.pose.orientation.w);
+
+  tf::Matrix3x3 m(q);
+  double roll, pitch, yaw;
+  m.getRPY(roll, pitch, yaw);
+  
+  curr_theta = yaw;
 }
 
 /*
@@ -116,8 +129,8 @@ std::pair<int,int> distance_to_pixel(float distance_x, float distance_y){
   // 1 pixel = 0.1 meter
   std::pair<int,int> indices;
 
-  indices.first  = (distance_x + 5)/0.1 ;// origin of the map is position (-5,-5)
-  indices.second = (distance_y + 5)/0.1 ;// origin of the map is position (-5,-5)
+  indices.first  = (distance_x + 5)/0.1 ; // origin of the map is position (-5,-5)
+  indices.second = (distance_y + 5)/0.1 ; // origin of the map is position (-5,-5)
 
   return indices;
 }
@@ -153,7 +166,7 @@ void BFS_stack_builder(int i, int  j){
 // East
   if(visited[i+1][j] == 0){  
 
-    if( i+1 < rows ){ // Seeing whether the index is even feasible or no
+    if( i+1 < rows ){                   // Seeing whether the index is even feasible or no
       layer.push_back({{i,j},{i+1,j}}); // Parent is go ing to be its current node
       visited[i+1][j] = 1;
     }
@@ -163,7 +176,7 @@ void BFS_stack_builder(int i, int  j){
 // South-East
   if(visited[i+1][j+1] == 0){  
 
-    if( i+1 < rows and j+1 < columns ){ // Seeing whether the index is even feasible or no
+    if( i+1 < rows and j+1 < columns ){   // Seeing whether the index is even feasible or no
       layer.push_back({{i,j},{i+1,j+1}}); // Parent is go ing to be its current node
       visited[i+1][j+1] = 1;
     }
@@ -173,7 +186,7 @@ void BFS_stack_builder(int i, int  j){
 // North-East
   if(visited[i+1][j-1] == 0){  
 
-    if( i+1 < rows and j-1 >= 0 ){ // Seeing whether the index is even feasible or no
+    if( i+1 < rows and j-1 >= 0 ){        // Seeing whether the index is even feasible or no
       layer.push_back({{i,j},{i+1,j-1}}); // Parent is go ing to be its current node
       visited[i+1][j-1] = 1;
     }
@@ -255,9 +268,9 @@ std::pair<int,int> build_a_tree( int layer_element_count, int flag, std::pair<in
 
     }
 
-    layer.erase(layer.begin()); // This will clear the whole layer when the whole for loop is done traversing without deleting the newly added elements of the next layer
+    layer.erase(layer.begin());                   // This will clear the whole layer when the whole for loop is done traversing without deleting the newly added elements of the next layer
     
-    BFS_stack_builder(indx.first, indx.second); // Now building the graph further
+    BFS_stack_builder(indx.first, indx.second);   // Now building the graph further
     
     if(layer_element_count == flag){
 
@@ -283,15 +296,15 @@ std::pair<int,int> build_a_tree( int layer_element_count, int flag, std::pair<in
 */   
 void build_path_from_stack(std::pair<int,int> final_index, std::pair<int,int> indx_parent){
 
-  if(path_pub_count >= 0){ // Cheching whether the path has been previously built or not
+  if(path_pub_count >= 0){        // Cheching whether the path has been previously built or not
 
-    path.push_back(final_index); // Pushing the Final Index
+    path.push_back(final_index);  // Pushing the Final Index
     stack_layer.pop();
     path.clear();
-    std::cout<< "Final index was found\n"; // Just to know whether we have been successful or not
+    std::cout<< "Final index was found\n";  // Just to know whether we have been successful or not
     std::vector<std::pair<std::pair<int,int>, std::pair<int,int>>> templayer; // This layer just stores the top of the stack elements
 
-    while(!stack_layer.empty()){ // Till we reach the initial index
+    while(!stack_layer.empty()){            // Till we reach the initial index
 
       std::cout<<"indx parent : "<<indx_parent.first<< " " << indx_parent.second<<std::endl;
       templayer = stack_layer.top();
@@ -338,23 +351,22 @@ turtlebot3::Points bfs(int start_index, int end_index, int width, int height, fl
   ROS_INFO("end : %d   , end : %d\n", final_index.first, final_index.second);
   ROS_INFO("start : %d , start : %d\n", initial_index.first, initial_index.second);
   
-  get_2d_map(data1); //got the 2d map to operate upon
+  get_2d_map(data1);                  //got the 2d map to operate upon
 
-  turtlebot3::Points P_msg; // This is going to be the final published path
+  turtlebot3::Points P_msg;           // This is going to be the final published path
   geometry_msgs::Point  point_pub;
 
-  if(odom_sub_count > 0){ // Just checking if the subscription is done or not
+  if(odom_sub_count > 0){             // Just checking if the subscription is done or not
 
     visited[initial_index.first][initial_index.second] = 1; // Marking the Current node as visited
 
     layer.push_back({{-1,-1},{initial_index.first,initial_index.second}});  // Initialzing layer0 with the First node later the elements will be added into it
-    stack_layer.push(layer);  // Now, Stack is a collection of all layers till the final index
+    stack_layer.push(layer);          // Now, Stack is a collection of all layers till the final index
 
-    int flag = layer.size()-1; // Flag is the signal that all the possible children in the current array has been added and now u can move on to the next layer
+    int flag = layer.size()-1;        // Flag is the signal that all the possible children in the current array has been added and now u can move on to the next layer
 
-    int layer_element_count = 0; // this will check if all the elements in the layer has been traversed or not
+    int layer_element_count = 0;      // this will check if all the elements in the layer has been traversed or not
 
-    // ############################################################################################### //
     std::pair<int,int> indx_parent;
     indx_parent = build_a_tree(flag, layer_element_count, final_index); // This will give us the parent of the final node 
 
@@ -370,7 +382,7 @@ turtlebot3::Points bfs(int start_index, int end_index, int width, int height, fl
 
   }
 
-  // ############### Converting the path in terms of the message that we are going to publish ############# //
+  // Converting the path in terms of the message that we are going to publish
   int x_t = path.size();
 
   geometry_msgs::Point path_pub[x_t];
@@ -387,6 +399,7 @@ turtlebot3::Points bfs(int start_index, int end_index, int width, int height, fl
   P_msg.points.clear();
   P_msg.end_index = des_theta;
   int index_z = 0;
+
   // Now declaring the messages with the help of the points
   for (auto &it : path_pub) {
       geometry_msgs::Point point;

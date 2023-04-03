@@ -6,7 +6,10 @@
 #include<nav_msgs/OccupancyGrid.h>
 #include<turtlebot3/Points.h>
 #include<bits/stdc++.h>
+#include<cmath.hpp>
 
+extern int data1[96*96];
+extern float curr_x, curr_y, curr_theta;
 void currentMap(const nav_msgs::OccupancyGrid::ConstPtr &);
 void get_position(const nav_msgs::OdometryPtr& );
 std::pair<int,int> distance_to_pixel(float , float );
