@@ -1,6 +1,7 @@
 ## Unnecessary folders
 turtlebot3_gazebo/
 turtlebot3_simulations/
+turtlebot3/.vscode/
 
 ### C++ ###
 # Prerequisites
