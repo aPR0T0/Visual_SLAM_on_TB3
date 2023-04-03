@@ -60,7 +60,7 @@ turtlebot3/.vscode/
 .DS_Store
 
 ### VisualStudioCode ###
-.vscode/*
+*/.vscode/*
 !.vscode/settings.json
 !.vscode/tasks.json
 !.vscode/launch.json

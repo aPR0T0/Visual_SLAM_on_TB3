@@ -39,8 +39,8 @@ void cloud_cb(const boost::shared_ptr<const sensor_msgs::PointCloud2>& input){
         
         if(i.z <= 0.6){
             helper.x =   i.x ;
-            helper.y = - i.y ;
-            helper.z =   i.z ;
+            helper.y = - i.y ;      // Height of the obstacle
+            helper.z =   i.z ;      // Actual distance from the sensor
 
             pcl_msg.points.push_back(helper);
         }
