@@ -118,6 +118,14 @@ int main(int argc, char *argv[])
 		}
 
 		make1D(global_points);
+
+		nav_msgs::OccupancyGrid map_1D;
+		std::vector<signed char> a(global_points_1D, global_points_1D + 96*96);
+
+		map_1D.data = a;
+
+		new_map.publish(map_1D);
+
         ros::spinOnce();
         r.sleep();
 	}
