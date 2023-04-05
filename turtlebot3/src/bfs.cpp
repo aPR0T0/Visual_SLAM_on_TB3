@@ -83,7 +83,7 @@ void currentMap(const nav_msgs::OccupancyGrid::ConstPtr &msg)
   Functionality :  Stores the Current position of the bot in the curr_x and curr_y
   Returns       :  None
 */
-void get_position(const nav_msgs::OdometryPtr& msg){
+void get_position(const nav_msgs::OdometryConstPtr &msg){
   odom_sub_count++;
 
   curr_x = msg->pose.pose.position.x;

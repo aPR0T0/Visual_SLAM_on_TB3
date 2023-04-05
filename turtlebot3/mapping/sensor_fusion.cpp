@@ -25,6 +25,7 @@ turtlebot3::Points pcl_data;		// For the realtime data
 float global_x, global_y;			// Global x and y coordinates
 float resolution = 0.1;				// Resolution 0.1 according to the gmapping
 int global_points_1D[96*96];		// creating a 1d array for publishing it to the new map topic
+int  global_points[96][96] = {0};
 
 /*
 	Function    :   determinantOfMatrix()
@@ -33,7 +34,7 @@ int global_points_1D[96*96];		// creating a 1d array for publishing it to the ne
 	Returns     :   Determinant of the given 2d matrix 
 */
 
-double make1D(int global_points[][])
+void make1D()
 {
 	for(int i = 0 ; i < 96 ; i ++){
 		for (int j = 0 ; j < 96 ; j ++){
@@ -49,7 +50,7 @@ double make1D(int global_points[][])
 	Returns     :   resultant array with multiplied matrices
 */
 double* matmul(double MatA[3][3], double MatB[3]){
-	double *ans = malloc(3*sizeof(double));
+	double *ans = (double*)malloc(3*sizeof(double));
 
 	for(int i = 0 ; i < 3 ; i++){
 		ans[i] = 0;
@@ -65,13 +66,13 @@ double* matmul(double MatA[3][3], double MatB[3]){
 	Arguments	: Array of coordinate_local through geometry_msgs
 	Funtionality: Just to read the data and store it
 */
-void oakd_sub(turtlebot3::Points::ConstPtr &msg){
-	pcl_data = msg->coordinate_local;			// Subscriber to get the current data
+void oakd_sub(const turtlebot3::Points::ConstPtr &msg){
+	pcl_data.points = msg->points;			// Subscriber to get the current data
 }
 
 int main(int argc, char *argv[])
 {
-	ros::init("sensor_fusion");
+	ros::init(argc, argv, "sensor_fusion");
 	ros::NodeHandle n;
 
 	ros::Subscriber odo_sub = n.subscribe<nav_msgs::Odometry>("/odom", 1000, get_position);
@@ -82,16 +83,15 @@ int main(int argc, char *argv[])
 	
     ros::Rate r(10);
 
-	float rotation_matrix[3][3] = {{ std::cos(curr_theta), -std::sin(curr_theta), 	0}\
+	double rotation_matrix[3][3] = {{ std::cos(curr_theta), -std::sin(curr_theta), 	0}\
 								,  { std::sin(curr_theta),  std::cos(curr_theta), 	0}\
 								,  {   			0		 ,  		  0	 	    ,  	1}};
 
     while(ros::ok()){
 		double coordinate_local[3], global_coordinates[3];		// Globally filled points are given value 1 and surrounding 9 pixels around it are also marked as 1 accounting for the inflation
-		int  global_points[96][96] = {0};
 		double *global;
 		// Find at what index the point occurs but before that find the point
-		for(auto &i : pcl_data){
+		for(auto &i : pcl_data.points){
 
 			coordinate_local[0] = i.x;
 			coordinate_local[1] = i.y;
@@ -117,7 +117,7 @@ int main(int argc, char *argv[])
 			}
 		}
 
-		make1D(global_points);
+		make1D();
 
 		nav_msgs::OccupancyGrid map_1D;
 		std::vector<signed char> a(global_points_1D, global_points_1D + 96*96);
