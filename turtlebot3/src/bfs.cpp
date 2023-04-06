@@ -20,8 +20,7 @@
 
 // ## Pre-initialzed Variables uses for heights and Lengths of the map ## //
 
-int rows = 96;
-int columns = 96;
+int rows, columns;
 int data1[96*96];
 
 // ###################################################################### //
@@ -68,7 +67,7 @@ int visited[96][96]={-1}; // Marking all nodes as unvisited
 */
 void currentMap(const nav_msgs::OccupancyGrid::ConstPtr &msg)
 {
-
+  std::cout<<"Subscribed map\n";
   rows = msg->info.width;
   columns = msg->info.height;
   for(int i = 0 ; i < rows*columns ; i++){
@@ -84,6 +83,7 @@ void currentMap(const nav_msgs::OccupancyGrid::ConstPtr &msg)
   Returns       :  None
 */
 void get_position(const nav_msgs::OdometryConstPtr &msg){
+  std::cout<<"Subscribed Odom\n";
   odom_sub_count++;
 
   curr_x = msg->pose.pose.position.x;

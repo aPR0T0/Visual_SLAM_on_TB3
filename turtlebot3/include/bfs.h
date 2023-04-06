@@ -9,9 +9,11 @@
 
 extern int data1[96*96];
 extern float curr_x, curr_y, curr_theta;
+extern int odom_sub_count;
 void currentMap(const nav_msgs::OccupancyGrid::ConstPtr &);
 void get_position(const nav_msgs::OdometryConstPtr& );
 void get_2d_map(int );
+extern int rows, columns;
 std::pair<int,int> distance_to_pixel(float , float );
 std::pair<double,double> pixel_to_distance(int , int );
 void BFS_stack_builder(int, int);
