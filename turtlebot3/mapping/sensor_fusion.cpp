@@ -34,8 +34,8 @@
 turtlebot3::Points pcl_data;		// For the realtime data
 float global_x, global_y;			// Global x and y coordinates
 float resolution = 0.1;				// Resolution 0.1 according to the gmapping
-int  global_points[96][96];
-int global_data1[96*96]; 
+int  global_points[rows][columns];
+int global_data1[rows*columns]; 
 
 /*
   Function      :  Current Map
@@ -165,7 +165,7 @@ int main(int argc, char *argv[])
 		nav_msgs::OccupancyGrid map_1D;
 
 		std::cout<<"This should be working\n"<<std::endl;
-		std::vector<signed char> a(global_data1, global_data1 + 96*96);
+		std::vector<signed char> a(global_data1, global_data1 + (const)(rows*columns));
 
 		map_1D.info.resolution = 0.1;
 		map_1D.info.width = columns;
