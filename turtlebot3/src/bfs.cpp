@@ -83,7 +83,7 @@ void currentMap(const nav_msgs::OccupancyGrid::ConstPtr &msg)
   Returns       :  None
 */
 void get_position(const nav_msgs::OdometryConstPtr &msg){
-  std::cout<<"Subscribed Odom\n";
+  
   odom_sub_count++;
 
   curr_x = msg->pose.pose.position.x;
